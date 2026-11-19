@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ethan Kurylo, game designer</title>
+<meta name="description" content="Portfolio of Ethan Kurylo, a cinematic, level and narrative designer. Projects include a Supermassive Games student project, Strays of War and The Last Drop.">
+<meta property="og:title" content="Ethan Kurylo, game designer">
+<meta property="og:description" content="Cinematic, level and narrative design portfolio.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<style>
+/* ------------------------------------------------------------
+
+
+   black cinema frames. The only accent is the editor's
+   selection orange, used for "selected" and focus states.
+   ------------------------------------------------------------ */
+:root {
+  --bg: #000;
+  --paper: #EDEDE8;
+  --ink: #F2F2EE;
+  --muted: #9C9D98;
+  --rule: rgba(242, 242, 238, .18);
+  --select: #F5A524;
+  --black: #000;
+  --on-black: #F2F2EE;
+  --on-black-muted: #9C9D98;
+  --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --serif: var(--display);
+  --gutter: clamp(1.25rem, 5vw, 5rem);
+  --max: 1360px;
+  --bar: min(16svh, max(72px, calc((100svh - 100vw / 2.39) / 2)));
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 1rem;
+  line-height: 1.5;
+  font-variation-settings: "wdth" 100;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--select); outline-offset: 3px; }
+
+.skip {
+  position: absolute; left: 1rem; top: -4rem; z-index: 50;
+  background: var(--select); color: var(--black); padding: .6rem 1rem; text-decoration: none; font-weight: 600;
+}
+.skip:focus { top: 1rem; }
+.vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- header (lives in the top letterbox bar) ---------- */
+.site-head {
+  position: absolute; inset: 0 0 auto 0; z-index: 20;
+  height: 72px; padding: 0 var(--gutter);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  color: var(--on-black);
+}
+.brand {
+  text-decoration: none; font-weight: 700; font-size: clamp(1.15rem, 1.6vw, 1.4rem); letter-spacing: .01em;
+  font-variation-settings: "wdth" 100;
+}
+.site-head nav { display: flex; gap: clamp(.9rem, 2.4vw, 2.25rem); white-space: nowrap; }
+.site-head nav a {
+  text-decoration: none; font-size: clamp(1.05rem, 1.35vw, 1.25rem); color: var(--on-black-muted);
+  padding: .25rem 0; border-bottom: 1px solid transparent;
+}
+.site-head nav a:hover { color: var(--on-black); border-bottom-color: currentColor; }
+
+/* ---------- the stage: a frame between two black bars ---------- */
+.stage {
+  position: relative; height: 100svh; min-height: 520px; max-height: 1100px;
+  background: var(--black); color: var(--on-black); overflow: hidden;
+}
+.stage .shot { position: absolute; inset: 0; }
+.stage .shot .ph { height: 100%; }
+.stage .shot img { width: 100%; height: 100%; object-fit: cover; }
+.stage .ph.missing { background: var(--black); }
+.stage .ph.missing::after { display: none; }
+.stage .shot::after { /* gentle grade so type reads over any screenshot */
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0) 45%);
+}
+.bar {
+  position: absolute; left: 0; right: 0; height: var(--bar); background: var(--black); z-index: 2;
+}
+.bar.top { top: 0; }
+.bar.bottom { bottom: 0; display: grid; place-items: center; padding: 0 var(--gutter); }
+.subtitle {
+  margin: 0; max-width: 46ch; text-align: center;
+  font-size: clamp(1rem, 1.6vw, 1.3rem); font-weight: 500; line-height: 1.35;
+  color: var(--on-black);
+}
+.stage-title {
+  position: absolute; z-index: 3; left: var(--gutter); right: var(--gutter);
+  bottom: calc(var(--bar) + clamp(1rem, 3vw, 2.25rem));
+  margin: 0; color: #fff;
+  font-size: clamp(3.2rem, 10vw, 9.5rem); line-height: .86; font-weight: 800;
+  font-variation-settings: "wdth" 100; letter-spacing: -.01em;
+  text-shadow: 0 2px 30px rgba(0,0,0,.35);
+}
+.stage-title .logo { display: none; }
+.stage-title.has-logo .logo { display: block; max-height: min(30svh, 260px); width: auto; max-width: min(80vw, 720px); }
+.stage-title.has-logo .t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* video in the frame: muted loop that covers the frame, full player on request */
+.stage { container-type: size; }
+.vid { position: absolute; inset: 0; overflow: hidden; }
+.vid iframe {
+  position: absolute; top: 50%; left: 50%; border: 0;
+  width: max(100cqw, 177.78cqh); height: max(100cqh, 56.25cqw);
+  transform: translate(-50%, -50%); pointer-events: none;
+  opacity: 0; transition: opacity .8s ease;
+}
+.vid iframe.ready { opacity: 1; }
+.stage.watching .vid iframe {
+  top: var(--bar); left: 0; width: 100%; height: calc(100% - 2 * var(--bar));
+  transform: none; pointer-events: auto; opacity: 1;
+}
+.stage.watching .shot::after, .stage.watching .stage-title { opacity: 0; visibility: hidden; }
+.stage.watching .shot > .ph, .stage.watching .poster { visibility: hidden; }
+.vid video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: transparent; }
+.stage.watching .vid video { inset: var(--bar) 0; height: calc(100% - 2 * var(--bar)); object-fit: contain; background: var(--black); }
+.inline-vid { display: block; width: 100%; aspect-ratio: 16 / 9; background: var(--black); }
+.poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.watch {
+  position: absolute; z-index: 4; right: var(--gutter); top: calc(var(--bar) + 1rem);
+  display: inline-flex; align-items: center; gap: .6rem; min-height: 44px; padding: 0 1.1rem;
+  background: rgba(0,0,0,.55); color: #fff; border: 1px solid rgba(255,255,255,.4);
+  font-weight: 600; font-size: .95rem; text-decoration: none; cursor: pointer;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.watch:hover { border-color: var(--select); }
+.watch::before { content: ""; width: 0; height: 0; border-style: solid; border-width: 6px 0 6px 10px; border-color: transparent transparent transparent currentColor; }
+.stage.watching .watch::before { width: 10px; height: 10px; border: 0; background: currentColor; }
+.stage.watching .subtitle { visibility: hidden; }
+.stage.watching .watch { top: auto; right: 50%; bottom: calc(var(--bar) / 2 - 22px); transform: translateX(50%); }
+
+/* inline video figures load the player only when clicked */
+.ytfig { position: relative; aspect-ratio: 16 / 9; background: var(--black); }
+.ytfig button { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: pointer; }
+.ytfig img { width: 100%; height: 100%; object-fit: cover; }
+.ytfig .play {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  display: inline-flex; align-items: center; gap: .6rem; padding: .8rem 1.3rem;
+  background: rgba(0,0,0,.7); color: #fff; font-weight: 600; border: 1px solid rgba(255,255,255,.4);
+}
+.ytfig button:hover .play { border-color: var(--select); }
+.ytfig .play::before { content: ""; border-style: solid; border-width: 7px 0 7px 12px; border-color: transparent transparent transparent currentColor; }
+.ytfig iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* one orchestrated moment: the camera "goes cinematic" on first load */
+.hero.intro .bar { animation: bar-in 1.1s cubic-bezier(.7, 0, .2, 1) .35s both; }
+.hero.intro .subtitle { animation: sub-in .5s ease 1.45s both; }
+@keyframes bar-in { from { height: 0; } to { height: var(--bar); } }
+@keyframes sub-in { from { opacity: 0; } to { opacity: 1; } }
+
+.case-hero { height: 88svh; }
+.case-hero.no-shot { height: 70svh; }
+.case-hero.no-shot .stage-title { color: var(--on-black); }
+
+/* ---------- placeholders: the missing-texture checker ---------- */
+.ph { position: relative; background: #111; overflow: hidden; }
+.ph.missing img { visibility: hidden; }
+.ph.missing {
+  background:
+    repeating-conic-gradient(#1C1C1C 0 25%, #262626 0 50%) 0 0 / 32px 32px;
+}
+.ph.missing::after {
+  content: attr(data-label); position: absolute; left: .6rem; bottom: .5rem; right: .6rem;
+  font-size: .75rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ---------- layout primitives ---------- */
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+section.block { padding: clamp(4rem, 9vw, 8rem) 0; }
+.section-title {
+  margin: 0 0 clamp(1.5rem, 3vw, 2.5rem);
+  font-size: clamp(1.9rem, 3.4vw, 2.8rem); line-height: 1; font-weight: 750;
+  font-variation-settings: "wdth" 100;
+}
+.prose p {
+  font-family: var(--serif); font-size: clamp(1.1rem, 1.35vw, 1.25rem); line-height: 1.62;
+  margin: 0 0 1em; max-width: 64ch; font-variation-settings: normal;
+}
+.prose p:last-child { margin-bottom: 0; }
+
+/* ---------- work index ---------- */
+.work-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(2rem, 4vw, 4rem); align-items: start; }
+.work-list { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--rule); }
+.work-list li { border-top: 1px solid var(--rule); }
+.work-row {
+  display: grid; grid-template-columns: 1fr; gap: .2rem;
+  padding: 1.15rem 0 1.25rem; text-decoration: none; transition: color .2s;
+}
+.work-title {
+  font-size: clamp(1.9rem, 3.6vw, 3.3rem); line-height: .95; font-weight: 760;
+  font-variation-settings: "wdth" 100;
+}
+.work-meta { color: var(--muted); font-size: .98rem; }
+.work-meta .status { color: var(--ink); font-weight: 600; }
+.work-list:hover .work-row:not(:hover):not(:focus-visible) .work-title { color: rgba(242,242,238,.35); }
+.work-thumb { display: none; }
+
+.work-preview { position: sticky; top: 2rem; }
+.preview-frame {
+  position: relative; aspect-ratio: 16 / 9; background: var(--black);
+  outline: 2px solid var(--select); outline-offset: 0;
+}
+.preview-frame .ph { position: absolute; inset: 0; opacity: 0; transition: opacity .35s ease; }
+.preview-frame .ph.on { opacity: 1; }
+.preview-frame img { width: 100%; height: 100%; object-fit: cover; }
+.title-card {
+  position: absolute; inset: 0; display: grid; place-items: center; text-align: center;
+  color: var(--on-black); padding: 1rem;
+}
+.title-card strong { display: block; font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 800; font-variation-settings: "wdth" 100; line-height: .9; }
+.title-card span { display: block; margin-top: .75rem; color: var(--on-black-muted); }
+.preview-caption { margin: .8rem 0 0; color: var(--muted); font-size: .95rem; min-height: 1.5em; }
+.preview-caption .note { display: block; margin-top: .25rem; font-size: .8rem; }
+.shot-note {
+  position: absolute; right: var(--gutter); bottom: calc(var(--bar) + .75rem); z-index: 2; margin: 0;
+  font-size: .8rem; color: #fff; background: rgba(0,0,0,.55); padding: .2rem .55rem; border-radius: 3px;
+}
+.stage.watching .shot-note { display: none; }
+
+/* ---------- about ---------- */
+.about-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+.portrait { aspect-ratio: 4 / 5; }
+.portrait img { width: 100%; height: 100%; object-fit: cover; }
+.skills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 2rem; margin: clamp(2rem, 4vw, 3rem) 0 0; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+.skills h3 { margin: 0 0 .6rem; font-size: 1rem; font-weight: 700; }
+.skills ul { list-style: none; margin: 0; padding: 0; color: var(--muted); line-height: 1.75; }
+.cta-row { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
+.btn {
+  display: inline-flex; align-items: center; min-height: 48px; padding: 0 1.4rem;
+  background: var(--ink); color: var(--bg); text-decoration: none; font-weight: 600;
+  border: 2px solid var(--ink);
+}
+.btn:hover { background: var(--black); border-color: var(--select); color: #fff; }
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn.ghost:hover { background: var(--ink); color: var(--bg); }
+
+/* ---------- contact: end credits ---------- */
+.credits { border-top: 1px solid var(--rule); background: var(--black); color: var(--on-black); text-align: center; padding: clamp(5rem, 12vw, 10rem) 0 3rem; }
+.credits h2 { margin: 0; font-size: clamp(2.6rem, 7vw, 6rem); font-weight: 800; line-height: .9; font-variation-settings: "wdth" 100; }
+.credits .lede { margin: 1.25rem auto 0; max-width: 46ch; color: var(--on-black-muted); font-family: var(--serif); font-size: 1.15rem; line-height: 1.55; }
+.credit-list { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.75rem; row-gap: .9rem; margin: clamp(3rem, 6vw, 4.5rem) auto 0; max-width: 680px; font-size: clamp(1.05rem, 1.6vw, 1.25rem); }
+.credit-list dt { text-align: right; color: var(--on-black-muted); }
+.credit-list dd { margin: 0; text-align: left; }
+.credit-list a { text-decoration: none; border-bottom: 1px solid rgba(242,242,238,.35); }
+.credit-list a:hover { border-bottom-color: var(--select); color: #fff; }
+.fine { margin-top: clamp(4rem, 9vw, 7rem); color: #6E6F6B; font-size: .85rem; }
+
+/* ---------- case study ---------- */
+.case-body { padding-top: clamp(2.5rem, 5vw, 4rem); padding-bottom: clamp(4rem, 8vw, 6rem); }
+.back { display: inline-block; text-decoration: none; font-weight: 600; border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem 2rem; margin: 2.25rem 0 0; padding: 1.5rem 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.facts dt { color: var(--muted); font-size: .9rem; margin-bottom: .2rem; }
+.facts dd { margin: 0; font-size: 1.05rem; line-height: 1.4; }
+.chapter { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: 1rem clamp(2rem, 5vw, 5rem); padding-top: clamp(3rem, 7vw, 5.5rem); }
+.chapter > h2 { margin: 0; font-size: clamp(1.6rem, 2.6vw, 2.2rem); line-height: 1.02; font-weight: 750; font-variation-settings: "wdth" 100; }
+.chapter > .figs { grid-column: 1 / -1; margin-top: clamp(1rem, 2vw, 1.5rem); }
+.roles { margin: 0; padding: 0; list-style: none; max-width: 64ch; }
+.roles li { padding: .85rem 0; border-top: 1px solid var(--rule); }
+.roles li:last-child { border-bottom: 1px solid var(--rule); }
+.roles strong { display: block; font-weight: 700; font-size: 1.05rem; }
+.roles span { font-family: var(--serif); font-size: 1.1rem; line-height: 1.5; color: var(--ink); }
+
+.figs + .figs { margin-top: 1rem; }
+.slideshow { position: relative; aspect-ratio: 16 / 9; background: var(--black); overflow: hidden; }
+.slideshow .slide { position: absolute; inset: 0; margin: 0; opacity: 0; visibility: hidden; transition: opacity .9s ease, visibility 0s linear .9s; }
+.slideshow .slide.on { opacity: 1; visibility: visible; transition: opacity .9s ease; z-index: 1; }
+.slideshow .shotbtn, .slideshow .ph { height: 100%; }
+.slideshow .ph img { width: 100%; height: 100%; object-fit: cover; }
+.figs.row { display: flex; gap: 1rem; align-items: flex-start; }
+.figs.row figure { flex: 1 1 0; min-width: 0; }
+.figs.row .ph { background: var(--paper); }
+.figs.row .ph img { width: 100%; height: 100%; object-fit: contain; }
+.figs.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.figs.grid2 .ph { aspect-ratio: 16 / 10; display: grid; place-items: center; }
+.figs.grid2 .ph img { width: 100%; height: 100%; object-fit: contain; }
+@media (max-width: 700px) {
+  .figs.grid2 { grid-template-columns: 1fr; }
+  .figs.row { flex-wrap: wrap; }
+  .figs.row figure:first-child { flex-basis: 100% !important; }
+}
+.ss-controls { display: flex; align-items: center; gap: .5rem; margin-top: .75rem; }
+.ss-controls button { min-width: 44px; min-height: 40px; padding: 0 .9rem; background: transparent; color: var(--ink); border: 1px solid var(--rule); cursor: pointer; font-weight: 600; }
+.ss-controls button:hover { border-color: var(--select); }
+.ss-count { color: var(--muted); font-size: .9rem; min-width: 4.5em; text-align: center; }
+.ss-controls .ss-toggle { margin-left: auto; }
+.figs.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 1rem; }
+.figs.grid .ph { aspect-ratio: 16 / 10; }
+.figs.grid .ph img { width: 100%; height: 100%; object-fit: cover; }
+.figs.wide { display: grid; gap: 1rem; }
+.figs.wide .ph { min-height: 160px; }
+.figs.wide .ph img { width: 100%; height: auto; }
+.figs.wide .ph.missing { aspect-ratio: 16 / 9; }
+.figs.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 1rem; align-items: start; }
+.figs.pair .ph { display: grid; place-items: center; padding: 1rem; }
+.figs.pair .ph img { max-height: 85svh; width: auto; max-width: 100%; }
+.figs.pair .ph.missing { aspect-ratio: 4 / 5; }
+.figs.masonry { columns: 3 260px; column-gap: 1rem; }
+.figs.masonry figure { break-inside: avoid; margin-bottom: 1rem; }
+.figs.masonry .ph.missing { aspect-ratio: 4 / 3; }
+.figs.diagram .ph { background: var(--paper); }
+.figs.wide.diagram .ph img { width: auto; max-width: 100%; max-height: 85svh; margin: 0 auto; }
+.figs.grid.diagram .ph img { object-fit: contain; }
+figure { margin: 0; }
+figcaption { margin-top: .5rem; color: var(--muted); font-size: .9rem; }
+.shotbtn { display: block; width: 100%; padding: 0; border: 0; cursor: zoom-in; background: none; }
+.shotbtn:hover .ph { outline: 2px solid var(--select); }
+
+.gallery-head { margin-top: clamp(3.5rem, 8vw, 6rem); }
+
+.case-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: clamp(4rem, 8vw, 6rem); padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+.case-nav a { text-decoration: none; }
+.case-nav .next { text-align: right; }
+.case-nav small { display: block; color: var(--muted); font-size: .95rem; margin-bottom: .3rem; }
+.case-nav strong { font-size: clamp(1.6rem, 3.2vw, 2.8rem); line-height: .95; font-weight: 760; font-variation-settings: "wdth" 100; }
+.case-nav a:hover strong { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; text-decoration-color: var(--select); }
+
+/* ---------- lightbox ---------- */
+.lb { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: var(--black); color: var(--on-black); }
+.lb::backdrop { background: var(--black); }
+.lb-inner { height: 100%; display: grid; grid-template-rows: 64px minmax(0, 1fr) 64px; }
+.lb-top, .lb-bottom { display: flex; align-items: center; justify-content: space-between; padding: 0 var(--gutter); gap: 1rem; }
+.lb-stage { position: relative; display: grid; place-items: center; min-height: 0; padding: 0 clamp(3.5rem, 7vw, 6rem); }
+.lb-stage .ph { max-width: 100%; max-height: 100%; background: transparent; }
+.lb-stage .ph.missing { width: min(100%, 960px); aspect-ratio: 16 / 9; }
+.lb-stage img { max-width: 100%; max-height: calc(100dvh - 128px); width: auto; height: auto; object-fit: contain; }
+.lb-btn { background: transparent; border: 1px solid rgba(242,242,238,.3); color: var(--on-black); min-width: 44px; min-height: 44px; padding: 0 1rem; cursor: pointer; }
+.lb-btn:hover { border-color: var(--select); }
+.lb-nav { position: absolute; top: 50%; transform: translateY(-50%); }
+.lb-prev { left: var(--gutter); }
+.lb-next { right: var(--gutter); }
+.lb-count { color: var(--on-black-muted); font-size: .9rem; }
+.lb-cap { color: var(--on-black-muted); font-size: .95rem; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .work-grid { grid-template-columns: 1fr; }
+  .work-preview { display: none; }
+  .work-row { padding-top: 1.25rem; }
+  .work-thumb { display: block; aspect-ratio: 16 / 9; margin-bottom: .9rem; }
+  .work-thumb .ph { height: 100%; }
+  .work-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .work-thumb .title-card strong { font-size: 3rem; }
+  .work-list:hover .work-row:not(:hover) .work-title { color: inherit; }
+  .about-grid { grid-template-columns: 1fr; }
+  .portrait { max-width: 420px; }
+  .chapter { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  :root { --bar: 76px; }
+  .stage { height: 82svh; min-height: 480px; }
+  .shot-note { top: calc(var(--bar) + .6rem); bottom: auto; }
+  .case-hero { height: 72svh; }
+  .case-hero.no-shot { height: 60svh; }
+  .skills { grid-template-columns: 1fr 1fr; }
+  .credit-list { column-gap: 1rem; }
+  .site-head nav a { font-size: 1rem; }
+  .lb-stage { padding: 0 .5rem; }
+  .lb-nav { top: auto; bottom: -56px; transform: none; }
+}
+@media (max-width: 760px) {
+  .brand .full { display: none; }
+}
+@media (max-width: 420px) {
+  .skills { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-skip>Skip to content</a>
+
+<header class="site-head">
+  <a class="brand" href="#top" data-home>Ethan Kurylo<span class="full"> - Game Designer</span></a>
+  <nav aria-label="Main">
+    <a href="#work">Projects</a>
+    <a href="#about">About</a>
+    <a href="#" data-cv target="_blank" rel="noopener">CV</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main id="main" tabindex="-1"></main>
+
+<dialog class="lb" aria-label="Image viewer">
+  <div class="lb-inner">
+    <div class="lb-top">
+      <span class="lb-count" aria-live="polite"></span>
+      <button class="lb-btn" data-lb="close">Close</button>
+    </div>
+    <div class="lb-stage">
+      <div class="ph lb-ph"><img alt=""></div>
+      <button class="lb-btn lb-nav lb-prev" data-lb="prev" aria-label="Previous image">Prev</button>
+      <button class="lb-btn lb-nav lb-next" data-lb="next" aria-label="Next image">Next</button>
+    </div>
+    <div class="lb-bottom"><span class="lb-cap"></span></div>
+  </div>
+</dialog>
+
+<!--
+  SITE CONTENT
+  Everything on the site comes from this block, so you can edit text,
+  add projects or swap images without touching the code below.
+
+  Images: "id/File.png" is a Squarespace CDN key. Full https:// URLs work too,
+  and so does any local path like "images/my-shot.jpg" once you add your own files.
+  settings.assets: "cdn" loads images from Squarespace; "local" loads them
+  from the images/ folder (run fetch_assets.py first, see README).
+-->
+<script id="site-data" type="application/json">
+{
+  "settings": {
+    "assets": "local",
+    "cdnBase": "https://images.squarespace-cdn.com/content/v1/694fa46935cdd81a19738284/",
+    "email": "",
+    "cv": {
+      "cdn": "https://www.kurylogames.uk/s/Ethan_Kurylo_CV.pdf",
+      "local": "Ethan_Kurylo_CV.pdf"
+    },
+    "playableCv": "playable-cv.html",
+    "local": {
+      "1e41cec9-ca24-483d-a92d-b5df9012f9fb/HighresScreenshot00015.png": "images/1e41cec9-ca24-483d-a92d-b5df9012f9fb/HighresScreenshot00015.jpg",
+      "06b7a091-9312-4b3d-962a-e2faab303ac6/IMG_3696.jpg": "images/06b7a091-9312-4b3d-962a-e2faab303ac6/IMG_3696.jpg",
+      "7820c2e2-e6a8-402f-a86a-d15d3e728600/HighresScreenshot00018.png": "images/7820c2e2-e6a8-402f-a86a-d15d3e728600/HighresScreenshot00018.jpg",
+      "40ef0a0d-70b5-44d0-8d1b-701a667523d5/Strays+Of+War+Logo.png": "images/40ef0a0d-70b5-44d0-8d1b-701a667523d5/Strays+Of+War+Logo.png",
+      "11e34466-4e80-4c45-a5fd-5787402f8478/HighresScreenshot0000111111111111.png": "images/11e34466-4e80-4c45-a5fd-5787402f8478/HighresScreenshot0000111111111111.jpg",
+      "100ee5bb-c6a1-418f-9f0b-fc74a152fca8/HighresScreenshot00016.png": "images/100ee5bb-c6a1-418f-9f0b-fc74a152fca8/HighresScreenshot00016.jpg",
+      "c08ab3e9-dc14-44b9-a28a-2fa308227fda/HighresScreenshot00017.png": "images/c08ab3e9-dc14-44b9-a28a-2fa308227fda/HighresScreenshot00017.jpg",
+      "0f6c974d-7852-4629-b560-6e4104cc9d2b/HighresScreenshot00014.png": "images/0f6c974d-7852-4629-b560-6e4104cc9d2b/HighresScreenshot00014.jpg",
+      "bbb2b8c1-4bc6-425b-bf41-e9a6ab43fd8f/HighresScreenshot00015.png": "images/bbb2b8c1-4bc6-425b-bf41-e9a6ab43fd8f/HighresScreenshot00015.jpg",
+      "db9542e7-8a95-4214-bf00-1b1ba94a96e1/HighresScreenshot00019.png": "images/db9542e7-8a95-4214-bf00-1b1ba94a96e1/HighresScreenshot00019.jpg",
+      "34f83da3-8385-4d09-8590-ee3f149f3ca3/HighresScreenshot00020.png": "images/34f83da3-8385-4d09-8590-ee3f149f3ca3/HighresScreenshot00020.jpg",
+      "e1b78616-97ed-429d-90fa-89304b6ec1fc/HighresScreenshot00021.png": "images/e1b78616-97ed-429d-90fa-89304b6ec1fc/HighresScreenshot00021.jpg",
+      "3c68388d-fa9e-4a64-b405-3da95d4a08b3/HighresScreenshot00022.png": "images/3c68388d-fa9e-4a64-b405-3da95d4a08b3/HighresScreenshot00022.jpg",
+      "b0ee7b7b-59b6-483f-a18c-50109252588d/HighresScreenshot00023.png": "images/b0ee7b7b-59b6-483f-a18c-50109252588d/HighresScreenshot00023.jpg",
+      "3724944f-b583-4258-846e-416535d435d9/HighresScreenshot00024.png": "images/3724944f-b583-4258-846e-416535d435d9/HighresScreenshot00024.jpg",
+      "84c5e689-16f3-4103-ac72-872c8d0db3de/HighresScreenshot00025.png": "images/84c5e689-16f3-4103-ac72-872c8d0db3de/HighresScreenshot00025.jpg",
+      "37b70b55-1995-4f4a-a198-f64dbb8258c5/Screenshot+2026-07-29+111421.png": "images/37b70b55-1995-4f4a-a198-f64dbb8258c5/Screenshot+2026-07-29+111421.jpg",
+      "c03dff8f-de1a-4ada-9d31-9b136c436b51/Screenshot+2026-07-29+111452.png": "images/c03dff8f-de1a-4ada-9d31-9b136c436b51/Screenshot+2026-07-29+111452.jpg",
+      "b774654e-dadf-4ae8-8da8-231a9f6a57fb/Screenshot+2026-07-29+111544.png": "images/b774654e-dadf-4ae8-8da8-231a9f6a57fb/Screenshot+2026-07-29+111544.jpg",
+      "134a12bf-6e28-46d3-9ddc-03c2b3c87586/Screenshot+2026-07-29+111655.png": "images/134a12bf-6e28-46d3-9ddc-03c2b3c87586/Screenshot+2026-07-29+111655.jpg",
+      "81847e16-6776-4c17-8f3a-81b3135ee392/Screenshot+2026-01-02+at+19.39.36.png": "images/81847e16-6776-4c17-8f3a-81b3135ee392/Screenshot+2026-01-02+at+19.39.36.jpg",
+      "597fc455-be3d-4d1a-a974-78c80d452dbb/Screenshot+2026-01-02+at+19.59.27.png": "images/597fc455-be3d-4d1a-a974-78c80d452dbb/Screenshot+2026-01-02+at+19.59.27.jpg",
+      "8a3d458e-5f8f-4c0d-9df9-ae41a25a7297/Screenshot+2026-07-29+111104.png": "images/8a3d458e-5f8f-4c0d-9df9-ae41a25a7297/Screenshot+2026-07-29+111104.jpg",
+      "67dbb848-2497-486d-bbbd-113d4e76a20b/Screenshot+2026-07-29+110954.png": "images/67dbb848-2497-486d-bbbd-113d4e76a20b/Screenshot+2026-07-29+110954.jpg",
+      "a7e2ddee-7566-4fa4-81df-cfeee7991689/Picture1.png": "images/a7e2ddee-7566-4fa4-81df-cfeee7991689/Picture1.png",
+      "ab973bfe-caf6-420d-bf12-60fe01c5aa31/Screenshot+2025-11-23+194310.png": "images/ab973bfe-caf6-420d-bf12-60fe01c5aa31/Screenshot+2025-11-23+194310.jpg",
+      "a74fc30b-5334-45a2-bfe5-388a0cff991e/Screenshot+2025-11-23+194349.png": "images/a74fc30b-5334-45a2-bfe5-388a0cff991e/Screenshot+2025-11-23+194349.jpg",
+      "bfe2c59a-543b-45ab-9538-99d78999bc9a/Screenshot+2025-11-23+194423.png": "images/bfe2c59a-543b-45ab-9538-99d78999bc9a/Screenshot+2025-11-23+194423.jpg",
+      "d1e39ca1-e16a-4c83-9ab0-31a880f65da0/Screenshot+2025-11-23+194536.png": "images/d1e39ca1-e16a-4c83-9ab0-31a880f65da0/Screenshot+2025-11-23+194536.jpg",
+      "218aaa83-45dc-40db-a881-256b354a7f40/Screenshot+2025-11-23+194638.png": "images/218aaa83-45dc-40db-a881-256b354a7f40/Screenshot+2025-11-23+194638.jpg",
+      "d2031209-4665-4a5e-9009-337c79242785/Screenshot+2025-11-23+194712.png": "images/d2031209-4665-4a5e-9009-337c79242785/Screenshot+2025-11-23+194712.jpg",
+      "205ef88a-8c1b-409d-9e85-910838a916ba/HighresScreenshot00000.png": "images/205ef88a-8c1b-409d-9e85-910838a916ba/HighresScreenshot00000.jpg",
+      "8f8fe82c-4fa5-4df2-a32d-4353b8cd4869/HighresScreenshot00001.png": "images/8f8fe82c-4fa5-4df2-a32d-4353b8cd4869/HighresScreenshot00001.jpg",
+      "60ebbe32-655c-4768-8715-9d117532dcd1/HighresScreenshot00002.png": "images/60ebbe32-655c-4768-8715-9d117532dcd1/HighresScreenshot00002.jpg",
+      "0a9a35a8-50a9-49a7-a815-3078884ceb43/HighresScreenshot00003.png": "images/0a9a35a8-50a9-49a7-a815-3078884ceb43/HighresScreenshot00003.jpg",
+      "27e76572-e4a1-4ad6-a25e-9da13c229d09/HighresScreenshot00004.png": "images/27e76572-e4a1-4ad6-a25e-9da13c229d09/HighresScreenshot00004.jpg",
+      "bcb11a89-d719-4322-990a-48ce7fd4650f/HighresScreenshot00005.png": "images/bcb11a89-d719-4322-990a-48ce7fd4650f/HighresScreenshot00005.jpg",
+      "ce700ab5-4965-4e93-9cfb-199b77812ec0/HighresScreenshot00006.png": "images/ce700ab5-4965-4e93-9cfb-199b77812ec0/HighresScreenshot00006.jpg",
+      "2adf22a3-85e0-4a0c-bdcd-a0c8791fdc55/HighresScreenshot00007.png": "images/2adf22a3-85e0-4a0c-bdcd-a0c8791fdc55/HighresScreenshot00007.jpg",
+      "f6e834d7-76c3-4738-88d4-0ac285faffb5/HighresScreenshot00020.png": "images/f6e834d7-76c3-4738-88d4-0ac285faffb5/HighresScreenshot00020.jpg",
+      "https://static1.squarespace.com/static/694fa46935cdd81a19738284/694fa88e0b82cf3c02a7fabb/694fa88e0b82cf3c02a7fabc/1785345161231/MainMenu.jpg": "images/1785345161231/MainMenu.jpg",
+      "fe0e313d-23b2-4a93-bfc6-6207383a8b0a/Flow+Chart.jpg": "images/fe0e313d-23b2-4a93-bfc6-6207383a8b0a/Flow+Chart.jpg",
+      "b247082c-026b-4a50-be21-1a579a52c381/Screenshot+2026-01-08+131157.png": "images/b247082c-026b-4a50-be21-1a579a52c381/Screenshot+2026-01-08+131157.jpg",
+      "b82b3dc2-10ad-4189-84ca-fad62fd6b346/IMG_6742.jpg": "images/b82b3dc2-10ad-4189-84ca-fad62fd6b346/IMG_6742.jpg",
+      "f874d39b-05f1-4e89-a042-18754e595fb2/IMG_6847.jpg": "images/f874d39b-05f1-4e89-a042-18754e595fb2/IMG_6847.jpg",
+      "6c1cd27e-fd99-4d51-a84a-46daf09e2d78/IMG_6846.jpg": "images/6c1cd27e-fd99-4d51-a84a-46daf09e2d78/IMG_6846.jpg",
+      "91ff295e-5068-449b-86f0-20ed01f47694/IMG_6741.jpg": "images/91ff295e-5068-449b-86f0-20ed01f47694/IMG_6741.jpg",
+      "62a5bf5a-c251-4838-ace7-cbdffa1275c5/IMG_6719.jpg": "images/62a5bf5a-c251-4838-ace7-cbdffa1275c5/IMG_6719.jpg",
+      "4c2f4dc9-f15e-4006-ae67-98331d1f1df1/HighresScreenshot00000.png": "images/4c2f4dc9-f15e-4006-ae67-98331d1f1df1/HighresScreenshot00000.jpg",
+      "7c231b41-bf9d-4052-93f3-80a1ac359023/HighresScreenshot00001.png": "images/7c231b41-bf9d-4052-93f3-80a1ac359023/HighresScreenshot00001.jpg",
+      "0562dcba-5e51-4516-8334-1747bebbddf5/HighresScreenshot00002.png": "images/0562dcba-5e51-4516-8334-1747bebbddf5/HighresScreenshot00002.jpg",
+      "d1e3a303-334e-4691-a768-155b3584af04/HighresScreenshot00003.png": "images/d1e3a303-334e-4691-a768-155b3584af04/HighresScreenshot00003.jpg",
+      "da970876-946c-49b2-a92c-fd15c69786fd/HighresScreenshot00004.png": "images/da970876-946c-49b2-a92c-fd15c69786fd/HighresScreenshot00004.jpg",
+      "1ae30483-7d7c-44c8-ab2c-fc8c4cd4d53d/HighresScreenshot00006.png": "images/1ae30483-7d7c-44c8-ab2c-fc8c4cd4d53d/HighresScreenshot00006.jpg",
+      "864c37ec-7084-439c-82f6-8a185b46cc94/HighresScreenshot00010.png": "images/864c37ec-7084-439c-82f6-8a185b46cc94/HighresScreenshot00010.jpg",
+      "1a7d0838-d4c1-4cfc-84f4-1e571c90a6bc/HighresScreenshot00011.png": "images/1a7d0838-d4c1-4cfc-84f4-1e571c90a6bc/HighresScreenshot00011.jpg",
+      "fa2499f1-c408-4b97-8c1a-89ab7ac24e1f/HighresScreenshot00012.png": "images/fa2499f1-c408-4b97-8c1a-89ab7ac24e1f/HighresScreenshot00012.jpg",
+      "dabf1bd4-30a8-4e22-9c6a-3baa94e2fbfa/HighresScreenshot00013.png": "images/dabf1bd4-30a8-4e22-9c6a-3baa94e2fbfa/HighresScreenshot00013.jpg",
+      "fe53a501-4879-48d6-aba0-d87a0a66d83c/HighresScreenshot00014.png": "images/fe53a501-4879-48d6-aba0-d87a0a66d83c/HighresScreenshot00014.jpg",
+      "a834160f-fb5d-43b0-a328-612dcc7f88ab/HighresScreenshot00015.png": "images/a834160f-fb5d-43b0-a328-612dcc7f88ab/HighresScreenshot00015.jpg",
+      "bc8a90ff-0764-4701-8240-a4c34705af47/HighresScreenshot00018.png": "images/bc8a90ff-0764-4701-8240-a4c34705af47/HighresScreenshot00018.jpg",
+      "e3f7c69f-7cac-47f5-a0a0-e8505fa2ee14/HighresScreenshot00019.png": "images/e3f7c69f-7cac-47f5-a0a0-e8505fa2ee14/HighresScreenshot00019.jpg",
+      "75a3b373-661f-48a3-9692-dba5c7792593/HighresScreenshot00025.png": "images/75a3b373-661f-48a3-9692-dba5c7792593/HighresScreenshot00025.jpg",
+      "b285b05b-06b8-4968-b2fd-306585c81306/HighresScreenshot00033.png": "images/b285b05b-06b8-4968-b2fd-306585c81306/HighresScreenshot00033.jpg",
+      "ac26b653-8e93-4a3c-9d40-2398132178cf/HighresScreenshot00009.png": "images/ac26b653-8e93-4a3c-9d40-2398132178cf/HighresScreenshot00009.jpg",
+      "e9953437-b5da-47ff-aabe-8282de2e46a8/LastDrop_Background4x.png": "images/e9953437-b5da-47ff-aabe-8282de2e46a8/LastDrop_Background4x.png",
+      "2617be82-3ce2-4ff9-862b-daa5d450197d/HighresScreenshot00011.png": "images/2617be82-3ce2-4ff9-862b-daa5d450197d/HighresScreenshot00011.jpg",
+      "8bfe986f-b4bc-4202-878a-422b0e12b598/HighresScreenshot00000.png": "images/8bfe986f-b4bc-4202-878a-422b0e12b598/HighresScreenshot00000.jpg",
+      "3f34e069-f2ab-4bbf-8415-0eed8515ec49/HighresScreenshot00001.png": "images/3f34e069-f2ab-4bbf-8415-0eed8515ec49/HighresScreenshot00001.jpg",
+      "3f1bfc05-0094-4e31-b7f5-c36349d51c13/HighresScreenshot00002.png": "images/3f1bfc05-0094-4e31-b7f5-c36349d51c13/HighresScreenshot00002.jpg",
+      "50153505-f459-49e7-8593-e261955de7ca/HighresScreenshot00003.png": "images/50153505-f459-49e7-8593-e261955de7ca/HighresScreenshot00003.jpg",
+      "9e4f95bb-8c20-40f4-b31b-aa09cfb295eb/HighresScreenshot00004.png": "images/9e4f95bb-8c20-40f4-b31b-aa09cfb295eb/HighresScreenshot00004.jpg",
+      "9d6f29c7-ff58-4e98-9fd8-b53ded70f2c9/HighresScreenshot00005.png": "images/9d6f29c7-ff58-4e98-9fd8-b53ded70f2c9/HighresScreenshot00005.jpg",
+      "6cba299a-8aa6-4413-b613-4476ab62c619/HighresScreenshot00006.png": "images/6cba299a-8aa6-4413-b613-4476ab62c619/HighresScreenshot00006.jpg",
+      "670610dd-4bfd-49b1-af21-7c290c6c4b5f/HighresScreenshot00007.png": "images/670610dd-4bfd-49b1-af21-7c290c6c4b5f/HighresScreenshot00007.jpg",
+      "d25d1f89-b8e0-4d67-b2ec-7aaa2a0a6b6f/HighresScreenshot00009.png": "images/d25d1f89-b8e0-4d67-b2ec-7aaa2a0a6b6f/HighresScreenshot00009.jpg",
+      "a48e18a8-17ba-4c1d-a8ce-8cb9a2712976/Artboard+1.jpg": "images/a48e18a8-17ba-4c1d-a8ce-8cb9a2712976/Artboard+1.jpg",
+      "25be1a4b-92f9-440f-96ee-29101e6ba2c6/Screenshot+2026-01-08+163512.png": "images/25be1a4b-92f9-440f-96ee-29101e6ba2c6/Screenshot+2026-01-08+163512.jpg",
+      "0308ba75-3d4b-40f0-b9bf-2ff6ea432be1/Screenshot+2026-01-08+165941.png": "images/0308ba75-3d4b-40f0-b9bf-2ff6ea432be1/Screenshot+2026-01-08+165941.jpg",
+      "e7ed5c36-36b1-420f-a027-73cdc56d4698/HighresScreenshot00020.png": "images/e7ed5c36-36b1-420f-a027-73cdc56d4698/HighresScreenshot00020.jpg",
+      "6f9831ab-c262-4146-a95e-47930198e82a/HighresScreenshot00024.png": "images/6f9831ab-c262-4146-a95e-47930198e82a/HighresScreenshot00024.jpg",
+      "2d4c7464-8dda-4369-9a3b-ac04f3c84a2c/HighresScreenshot00004.png": "images/2d4c7464-8dda-4369-9a3b-ac04f3c84a2c/HighresScreenshot00004.jpg",
+      "f86e6e38-7d81-4376-9b51-bdbc29a9a286/HighresScreenshot00013.png": "images/f86e6e38-7d81-4376-9b51-bdbc29a9a286/HighresScreenshot00013.jpg",
+      "fdfb34f4-e37b-430c-8415-3397e324a67c/HighresScreenshot00014.png": "images/fdfb34f4-e37b-430c-8415-3397e324a67c/HighresScreenshot00014.jpg",
+      "cc638df9-3e09-4e1e-ae36-f062e4bf1549/HighresScreenshot00015.png": "images/cc638df9-3e09-4e1e-ae36-f062e4bf1549/HighresScreenshot00015.jpg",
+      "da9c16eb-74c5-467b-aa42-701557ca3109/HighresScreenshot00016.png": "images/da9c16eb-74c5-467b-aa42-701557ca3109/HighresScreenshot00016.jpg",
+      "b941d7ff-3825-4ad1-8526-b450d79814e9/HighresScreenshot00017.png": "images/b941d7ff-3825-4ad1-8526-b450d79814e9/HighresScreenshot00017.jpg",
+      "084cd181-ca02-4a65-873a-e6ab22601e92/HighresScreenshot00018.png": "images/084cd181-ca02-4a65-873a-e6ab22601e92/HighresScreenshot00018.jpg",
+      "98fd0976-eaa8-4f6d-b03e-f4761c452f3b/HighresScreenshot00012.png": "images/98fd0976-eaa8-4f6d-b03e-f4761c452f3b/HighresScreenshot00012.jpg",
+      "bc51bd58-1896-4566-8cb4-f281c2dbaf3a/HighresScreenshot00011.png": "images/bc51bd58-1896-4566-8cb4-f281c2dbaf3a/HighresScreenshot00011.jpg",
+      "0c782933-f280-4ffe-99c8-7a34e0c159eb/HighresScreenshot00019.png": "images/0c782933-f280-4ffe-99c8-7a34e0c159eb/HighresScreenshot00019.jpg",
+      "5200ddf9-389a-44c8-9650-9ef1e16fc208/HighresScreenshot00023.png": "images/5200ddf9-389a-44c8-9650-9ef1e16fc208/HighresScreenshot00023.jpg",
+      "4409c011-ab0a-447d-90b4-c43066aa992e/HighresScreenshot00022.png": "images/4409c011-ab0a-447d-90b4-c43066aa992e/HighresScreenshot00022.jpg",
+      "6731950b-55bc-4557-bad8-42b87c428433/HighresScreenshot00000.png": "images/6731950b-55bc-4557-bad8-42b87c428433/HighresScreenshot00000.jpg",
+      "129e717c-7916-4e73-b7b2-00768ec1252f/HighresScreenshot00001.png": "images/129e717c-7916-4e73-b7b2-00768ec1252f/HighresScreenshot00001.jpg",
+      "1d3db0be-4c2a-4828-8432-f1a92f71cc1c/HighresScreenshot00002.png": "images/1d3db0be-4c2a-4828-8432-f1a92f71cc1c/HighresScreenshot00002.jpg",
+      "dab3b59c-b483-4177-a6e8-654a998371da/HighresScreenshot00003.png": "images/dab3b59c-b483-4177-a6e8-654a998371da/HighresScreenshot00003.jpg",
+      "cdd50070-7904-4b64-9f29-eaa5c3d0f8f0/HighresScreenshot00005.png": "images/cdd50070-7904-4b64-9f29-eaa5c3d0f8f0/HighresScreenshot00005.jpg",
+      "b8cf4a6d-3039-4c39-b66e-9229146b54c8/HighresScreenshot00006.png": "images/b8cf4a6d-3039-4c39-b66e-9229146b54c8/HighresScreenshot00006.jpg",
+      "d26d4f4c-8ed4-4dfa-b245-9152e8b42805/HighresScreenshot00007.png": "images/d26d4f4c-8ed4-4dfa-b245-9152e8b42805/HighresScreenshot00007.jpg",
+      "e5d8d4ec-f43d-4070-a856-982f74ddbda1/HighresScreenshot00008.png": "images/e5d8d4ec-f43d-4070-a856-982f74ddbda1/HighresScreenshot00008.jpg",
+      "3ea86660-338d-4d55-90f4-b56e3630ef27/HighresScreenshot00009.png": "images/3ea86660-338d-4d55-90f4-b56e3630ef27/HighresScreenshot00009.jpg",
+      "9c4dcd73-1464-498e-b001-75329252a5f6/HighresScreenshot00010.png": "images/9c4dcd73-1464-498e-b001-75329252a5f6/HighresScreenshot00010.jpg",
+      "20b1cc67-874a-455c-af1b-e473c383c1b8/HighresScreenshot00025.png": "images/20b1cc67-874a-455c-af1b-e473c383c1b8/HighresScreenshot00025.jpg",
+      "d527ccf3-b0df-4018-a031-15f4363082cb/HighresScreenshot00026.png": "images/d527ccf3-b0df-4018-a031-15f4363082cb/HighresScreenshot00026.jpg",
+      "f71eab6e-43db-47b2-94b9-e99a3c95ee2a/Screenshot+2026-01-09+164141.png": "images/f71eab6e-43db-47b2-94b9-e99a3c95ee2a/Screenshot+2026-01-09+164141.jpg",
+      "3b0513a5-e466-433f-b1d1-74a3ca7176fb/Mini+Game+Sketch.jpg": "images/3b0513a5-e466-433f-b1d1-74a3ca7176fb/Mini+Game+Sketch.jpg",
+      "01e58838-20b4-488f-858c-a1f4fd56bbb1/MiniGame+Sketch+Idea.jpg": "images/01e58838-20b4-488f-858c-a1f4fd56bbb1/MiniGame+Sketch+Idea.jpg"
+    }
+  },
+  "person": {
+    "name": "Ethan Kurylo",
+    "subtitle": "Cinematic, level and narrative designer.",
+    "heroImage": "1e41cec9-ca24-483d-a92d-b5df9012f9fb/HighresScreenshot00015.png",
+    "portrait": "06b7a091-9312-4b3d-962a-e2faab303ac6/IMG_3696.jpg",
+    "about": [
+      "I’m a Game Design graduate who loves turning ideas into interactive experiences. I’m passionate about how games tell stories, challenge players, and create emotional connections. During my degree, I’ve developed skills in prototyping, cinematic sequences, level design, and gameplay iteration, and I’m always excited to learn new tools and push my creativity further.",
+      "Through my studies, I’ve enjoyed designing systems that support storytelling, whether that’s shaping environments that invite exploration or creating mechanics that encourage cooperation and connection between players. I love experimenting with ideas, prototyping gameplay, and refining designs through feedback to bring worlds and stories to life.",
+      "I’m currently developing my portfolio as I prepare to step into the games industry, with the goal of creating games that feel alive, evocative, and memorable."
+    ],
+    "skills": [
+      {
+        "title": "Design",
+        "items": [
+          "Cinematic design",
+          "Level design",
+          "Narrative design",
+          "Systems design",
+          "Greyboxing",
+          "Mechanics prototyping",
+          "Visual scripting (Blueprints)",
+          "Performance capture direction"
+        ]
+      },
+      {
+        "title": "Tools",
+        "items": [
+          "Unreal Engine 4 and 5",
+          "Unity",
+          "Maya",
+          "Blender",
+          "Vicon",
+          "Git and GitHub",
+          "ClickUp, Trello, Miro"
+        ]
+      },
+      {
+        "title": "Ways of working",
+        "items": [
+          "Design documentation",
+          "Cross-discipline teamwork",
+          "Agile and Scrum",
+          "Creative problem solving"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "LinkedIn",
+        "text": "Ethan Kurylo",
+        "url": "https://www.linkedin.com/in/ethan-kurylo/"
+      },
+      {
+        "label": "YouTube",
+        "text": "@ethankurylodesigns",
+        "url": "https://www.youtube.com/@ethankurylodesigns"
+      },
+      {
+        "label": "Instagram",
+        "text": "@kurylo_games",
+        "url": "https://www.instagram.com/kurylo_games/"
+      }
+    ],
+    "heroVideo": {
+      "src": "videos/home-reel.mp4",
+      "poster": "videos/home-reel.jpg",
+      "sound": false
+    }
+  },
+  "projects": [
+    {
+      "slug": "koras",
+      "title": "Köras",
+      "role": "Designer and developer",
+      "summary": "Narrative-driven fantasy RPG in Unreal Engine 5.8",
+      "status": "In development",
+      "tagline": "A narrative-driven fantasy RPG, in development in Unreal Engine 5.8.",
+      "facts": [
+        [
+          "Role",
+          "Designer and developer"
+        ],
+        [
+          "Genre",
+          "Narrative-driven fantasy RPG"
+        ],
+        [
+          "Engine",
+          "Unreal Engine 5.8"
+        ],
+        [
+          "Status",
+          "In development: core systems"
+        ]
+      ],
+      "chapters": [
+        {
+          "h": "What I’m making",
+          "p": [
+            "Köras is a narrative-driven fantasy RPG that I’m designing and building myself in Unreal Engine 5.8.",
+            "The game is built around a loop of investigation, choice, consequence and narrative progression. My touchstones are Baldur’s Gate 3 and The Last of Us Part II."
+          ]
+        },
+        {
+          "h": "How I’m building it",
+          "p": [
+            "Story comes first in the design, so the systems are shaped to serve it. Combat is real-time action with a third-person, over-the-shoulder camera, and the game is structured in story-driven chapters.",
+            "I’m building the core systems first, so the narrative has solid foundations before content goes on top."
+          ]
+        },
+        {
+          "h": "Right now",
+          "p": [
+            "I’m working on those core systems. The story itself stays under wraps for now, and I’ll share footage here as it comes together."
+          ]
+        }
+      ],
+      "gallery": [],
+      "hero": "images/koras/koras-header.jpg",
+      "heroNote": "AI-generated concept image"
+    },
+    {
+      "slug": "strays-of-war",
+      "title": "Strays of War",
+      "role": "Creator and designer",
+      "summary": "Co-op puzzle adventure set in an alternate 1974 Prague",
+      "tagline": "A stray cat and a stray dog survive the invasion of Prague, and each other.",
+      "hero": "7820c2e2-e6a8-402f-a86a-d15d3e728600/HighresScreenshot00018.png",
+      "logo": "40ef0a0d-70b5-44d0-8d1b-701a667523d5/Strays+Of+War+Logo.png",
+      "facts": [
+        [
+          "Role",
+          "Creator and designer"
+        ],
+        [
+          "Genre",
+          "Co-op puzzle adventure"
+        ],
+        [
+          "Context",
+          "University project"
+        ],
+        [
+          "Art",
+          "Game artists at UCA, including Lucy Coleman"
+        ]
+      ],
+      "chapters": [
+        {
+          "h": "The premise",
+          "p": [
+            "The game takes place in 1974 in Czechoslovakia in Prague, after the events of the Prague Spring in 1968. In this fictional timeline within the game, the occupation of Czechoslovakia escalated into a war between Czechoslovakia and the members of the Warsaw Pact. Through a revolution of the people versus the corrupt government, a new political party created by the people overthrew the government and fought back against the Soviets.",
+            "The game starts just as the occupation of Prague is taking place, and the players will control their chosen character as they go about their day-to-day life. Suddenly the war starts around them, as the city of Prague is under attack from the Soviet Union causing destruction and chaos. Within the destruction, the relationship between the characters begins to form as they are forced to work together to survive the war.",
+            "The players take control of a cat and a dog, with their story centred around the uneasy relationship between them and is put to the test through environmental circumstances and destruction taking place around them. The game is based around an environmental story and a puzzle adventure that introduces puzzles that the players need to work together to solve to progress through the game."
+          ],
+          "figs": [
+            {
+              "layout": "wide",
+              "items": [
+                {
+                  "video": "videos/strays-of-war-gameplay.mp4",
+                  "poster": "videos/strays-of-war-gameplay.jpg",
+                  "c": "Full gameplay"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Two characters, two toolsets",
+          "p": [
+            "The cat jumps, sneaks and knocks things off counters. The dog digs, tracks scents, carries objects and tugs. Both can run and bark or meow, which drives the chase and escape sequences.",
+            "The puzzles are built around those differences, and the story is told through the spaces the two of them move through."
+          ],
+          "figs": [
+            {
+              "layout": "slideshow",
+              "items": [
+                "11e34466-4e80-4c45-a5fd-5787402f8478/HighresScreenshot0000111111111111.png",
+                "100ee5bb-c6a1-418f-9f0b-fc74a152fca8/HighresScreenshot00016.png",
+                "c08ab3e9-dc14-44b9-a28a-2fa308227fda/HighresScreenshot00017.png",
+                "0f6c974d-7852-4629-b560-6e4104cc9d2b/HighresScreenshot00014.png",
+                "bbb2b8c1-4bc6-425b-bf41-e9a6ab43fd8f/HighresScreenshot00015.png",
+                "db9542e7-8a95-4214-bf00-1b1ba94a96e1/HighresScreenshot00019.png",
+                "34f83da3-8385-4d09-8590-ee3f149f3ca3/HighresScreenshot00020.png",
+                "e1b78616-97ed-429d-90fa-89304b6ec1fc/HighresScreenshot00021.png",
+                "3c68388d-fa9e-4a64-b405-3da95d4a08b3/HighresScreenshot00022.png",
+                "b0ee7b7b-59b6-483f-a18c-50109252588d/HighresScreenshot00023.png",
+                "3724944f-b583-4258-846e-416535d435d9/HighresScreenshot00024.png",
+                "84c5e689-16f3-4103-ac72-872c8d0db3de/HighresScreenshot00025.png"
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Researching 1974 Prague",
+          "p": [
+            "I researched the city as it was: its architecture, the metro, apartment interiors, the shared spaces inside its city blocks, and Soviet and Czechoslovak propaganda posters.",
+            "I turned that research into an art direction deck for the game artists I worked with, pairing each reference image with notes on what to take from it."
+          ],
+          "figs": [
+            {
+              "layout": "masonry",
+              "items": [
+                "37b70b55-1995-4f4a-a198-f64dbb8258c5/Screenshot+2026-07-29+111421.png",
+                "c03dff8f-de1a-4ada-9d31-9b136c436b51/Screenshot+2026-07-29+111452.png",
+                "b774654e-dadf-4ae8-8da8-231a9f6a57fb/Screenshot+2026-07-29+111544.png",
+                "134a12bf-6e28-46d3-9ddc-03c2b3c87586/Screenshot+2026-07-29+111655.png"
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Layout and flow",
+          "p": [
+            "I planned the level from sketches of the city block, and mapped the whole game from start to finish in a flow chart. The chart also covers how the two characters interact when they’re in different rooms."
+          ],
+          "figs": [
+            {
+              "layout": "grid2 diagram",
+              "items": [
+                {
+                  "k": "81847e16-6776-4c17-8f3a-81b3135ee392/Screenshot+2026-01-02+at+19.39.36.png",
+                  "c": "Layout sketch"
+                },
+                {
+                  "k": "597fc455-be3d-4d1a-a974-78c80d452dbb/Screenshot+2026-01-02+at+19.59.27.png",
+                  "c": "Layout plan"
+                },
+                {
+                  "k": "8a3d458e-5f8f-4c0d-9df9-ae41a25a7297/Screenshot+2026-07-29+111104.png",
+                  "c": "Gameplay mechanics: the cat"
+                },
+                {
+                  "k": "67dbb848-2497-486d-bbbd-113d4e76a20b/Screenshot+2026-07-29+110954.png",
+                  "c": "Gameplay mechanics: the dog"
+                }
+              ]
+            },
+            {
+              "layout": "wide diagram",
+              "items": [
+                {
+                  "k": "a7e2ddee-7566-4fa4-81df-cfeee7991689/Picture1.png",
+                  "c": "Gameplay flow chart, start to finish"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Pre-development",
+          "p": [
+            "Blockouts of the city and its interiors, used to test layout, scale and movement before any detailed assets went in."
+          ],
+          "figs": [
+            {
+              "layout": "grid",
+              "items": [
+                "ab973bfe-caf6-420d-bf12-60fe01c5aa31/Screenshot+2025-11-23+194310.png",
+                "a74fc30b-5334-45a2-bfe5-388a0cff991e/Screenshot+2025-11-23+194349.png",
+                "bfe2c59a-543b-45ab-9538-99d78999bc9a/Screenshot+2025-11-23+194423.png",
+                "d1e39ca1-e16a-4c83-9ab0-31a880f65da0/Screenshot+2025-11-23+194536.png",
+                "218aaa83-45dc-40db-a881-256b354a7f40/Screenshot+2025-11-23+194638.png",
+                "d2031209-4665-4a5e-9009-337c79242785/Screenshot+2025-11-23+194712.png",
+                "205ef88a-8c1b-409d-9e85-910838a916ba/HighresScreenshot00000.png",
+                "8f8fe82c-4fa5-4df2-a32d-4353b8cd4869/HighresScreenshot00001.png",
+                "60ebbe32-655c-4768-8715-9d117532dcd1/HighresScreenshot00002.png",
+                "0a9a35a8-50a9-49a7-a815-3078884ceb43/HighresScreenshot00003.png",
+                "27e76572-e4a1-4ad6-a25e-9da13c229d09/HighresScreenshot00004.png",
+                "bcb11a89-d719-4322-990a-48ce7fd4650f/HighresScreenshot00005.png",
+                "ce700ab5-4965-4e93-9cfb-199b77812ec0/HighresScreenshot00006.png",
+                "2adf22a3-85e0-4a0c-bdcd-a0c8791fdc55/HighresScreenshot00007.png"
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Motion matching",
+          "p": [
+            "Motion matching blends the dog’s walk, trot and run animations and handles the transitions between actions, so it moves like a real dog. Spinal curvature lets its body bend as it turns."
+          ],
+          "figs": [
+            {
+              "layout": "wide",
+              "items": [
+                {
+                  "video": "videos/strays-motion-matching.mp4",
+                  "poster": "videos/strays-motion-matching.jpg",
+                  "c": "Motion matching",
+                  "autoplay": true
+                },
+                {
+                  "video": "videos/strays-spinal-curvature.mp4",
+                  "poster": "videos/strays-spinal-curvature.jpg",
+                  "c": "Spinal curvature",
+                  "autoplay": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Jumping and balancing",
+          "p": [
+            "The cat can jump up onto walls and ledges and balance along narrow edges."
+          ],
+          "figs": [
+            {
+              "layout": "wide",
+              "items": [
+                {
+                  "video": "videos/strays-jumping-balancing.mp4",
+                  "poster": "videos/strays-jumping-balancing.jpg",
+                  "c": "Jumping and balancing",
+                  "autoplay": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "gallery": [],
+      "video": {
+        "src": "videos/strays-of-war-showreel.mp4",
+        "poster": "videos/strays-of-war-showreel.jpg"
+      }
+    },
+    {
+      "slug": "frank-stone",
+      "title": "The Casting of Frank Stone",
+      "role": "Lead level designer, cinematic designer, director",
+      "summary": "University project with Supermassive Games",
+      "tagline": "A branching horror scene in Supermassive Games’ world, with cinematics shot on a motion capture stage.",
+      "hero": "f6e834d7-76c3-4738-88d4-0ac285faffb5/HighresScreenshot00020.png",
+      "thumb": "https://static1.squarespace.com/static/694fa46935cdd81a19738284/694fa88e0b82cf3c02a7fabb/694fa88e0b82cf3c02a7fabc/1785345161231/MainMenu.jpg",
+      "facts": [
+        [
+          "Role",
+          "Project coordinator, lead level designer, cinematic designer, director, sound designer"
+        ],
+        [
+          "Team",
+          "7: 2 game designers, 1 game developer, 4 game artists"
+        ],
+        [
+          "Context",
+          "Industry Brief unit with Supermassive Games, 10 weeks"
+        ],
+        [
+          "Tools",
+          "Unreal Engine, Vicon, Live Link Face, ClickUp"
+        ]
+      ],
+      "chapters": [
+        {
+          "h": "The brief",
+          "p": [
+            "For our Industry Brief unit, second-year teams each picked one of Supermassive Games’ IPs, built a game on it over ten weeks and presented it to the studio. My team chose The Casting of Frank Stone.",
+            "We set out to match Supermassive’s style of gameplay and storytelling as closely as we could, while adding new mechanics of our own without straying from the source material."
+          ],
+          "figs": [
+            {
+              "layout": "wide",
+              "items": [
+                {
+                  "yt": "WXIfXz29Tq0",
+                  "c": "Full gameplay"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "h": "What I did",
+          "roles": [
+            [
+              "Project coordinator",
+              "Ran the team, assigned tasks, supported design decisions and kept our deadlines in ClickUp."
+            ],
+            [
+              "Lead level designer",
+              "Built the main level and polished the starter level."
+            ],
+            [
+              "Cinematic designer",
+              "Assembled the level sequences: camera work, music, voice lines and sound effects."
+            ],
+            [
+              "Director",
+              "Directed our motion capture actors and set up facial capture with Live Link on phones."
+            ],
+            [
+              "Sound designer",
+              "Sourced and made the sound effects and music for each level."
+            ]
+          ]
+        },
+        {
+          "figs": [
+            {
+              "layout": "slideshow",
+              "items": [
+                "images/frank-stone/HighresScreenshot00022.jpg",
+                "images/frank-stone/HighresScreenshot00023.jpg",
+                "images/frank-stone/HighresScreenshot00024.jpg",
+                "images/frank-stone/HighresScreenshot00030.jpg",
+                "images/frank-stone/HighresScreenshot00031.jpg",
+                "images/frank-stone/HighresScreenshot00032.jpg",
+                "images/frank-stone/HighresScreenshot00005.jpg",
+                "images/frank-stone/HighresScreenshot00007.jpg",
+                "images/frank-stone/HighresScreenshot00008.jpg",
+                "images/frank-stone/HighresScreenshot00009.jpg",
+                "images/frank-stone/HighresScreenshot00016.jpg",
+                "images/frank-stone/HighresScreenshot00017.jpg",
+                "images/frank-stone/HighresScreenshot00020.jpg",
+                "images/frank-stone/HighresScreenshot00021.jpg"
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Mapping the choices",
+          "p": [
+            "Before building anything, the other designer and I mapped the game in a flow chart: choices that lead to failure or to an easier route, and endings where both characters survive or only one does. We then cut it back to a version we could build well in ten weeks.",
+            "Even small moments carry a choice, like who ends up holding the hammer."
+          ],
+          "figs": [
+            {
+              "layout": "pair diagram",
+              "items": [
+                {
+                  "k": "fe0e313d-23b2-4a93-bfc6-6207383a8b0a/Flow+Chart.jpg",
+                  "c": "The full branching flow chart"
+                },
+                {
+                  "k": "b247082c-026b-4a50-be21-1a579a52c381/Screenshot+2026-01-08+131157.png",
+                  "c": "The simplified chart we built from"
+                }
+              ]
+            },
+            {
+              "layout": "row",
+              "items": [
+                {
+                  "k": "images/frank-stone/ClickUp.png",
+                  "c": "Our ClickUp board",
+                  "ratio": "1916 / 1074"
+                },
+                {
+                  "k": "images/frank-stone/Asset_List.png",
+                  "c": "Asset list",
+                  "ratio": "1209 / 899"
+                },
+                {
+                  "k": "images/frank-stone/Burnlist.png",
+                  "c": "Burn list",
+                  "ratio": "455 / 1000"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Directing the capture",
+          "p": [
+            "It was my first time directing on a Vicon stage. The facial capture headgear held actors back in the fast action scenes, so we shot each scene twice: once for the body with no headgear, then again for the face.",
+            "The whole team came to the studio sessions, so everyone saw the sequences come to life before they went into the game."
+          ],
+          "figs": [
+            {
+              "layout": "masonry",
+              "items": [
+                "b82b3dc2-10ad-4189-84ca-fad62fd6b346/IMG_6742.jpg",
+                "f874d39b-05f1-4e89-a042-18754e595fb2/IMG_6847.jpg",
+                "6c1cd27e-fd99-4d51-a84a-46daf09e2d78/IMG_6846.jpg",
+                "91ff295e-5068-449b-86f0-20ed01f47694/IMG_6741.jpg",
+                "62a5bf5a-c251-4838-ace7-cbdffa1275c5/IMG_6719.jpg",
+                "images/frank-stone/IMG_6690.jpg"
+              ]
+            },
+            {
+              "layout": "row",
+              "items": [
+                {
+                  "video": "videos/frank-stone-capture-6734.mp4",
+                  "poster": "videos/frank-stone-capture-6734.jpg",
+                  "ratio": "16 / 9",
+                  "c": "On the capture stage"
+                },
+                {
+                  "video": "videos/frank-stone-capture-6732.mp4",
+                  "poster": "videos/frank-stone-capture-6732.jpg",
+                  "ratio": "9 / 16"
+                },
+                {
+                  "video": "videos/frank-stone-capture-6693.mp4",
+                  "poster": "videos/frank-stone-capture-6693.jpg",
+                  "ratio": "9 / 16"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Building the sequences",
+          "p": [
+            "Back in Unreal, I turned the captured performances into level sequences: placing the cameras, cutting the shots and laying in music, voice lines and sound effects."
+          ],
+          "figs": [
+            {
+              "layout": "wide",
+              "items": [
+                {
+                  "k": "images/frank-stone/Sequencer.png",
+                  "c": "Assembling a level sequence in Sequencer"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "gallery": [
+        "4c2f4dc9-f15e-4006-ae67-98331d1f1df1/HighresScreenshot00000.png",
+        "7c231b41-bf9d-4052-93f3-80a1ac359023/HighresScreenshot00001.png",
+        "0562dcba-5e51-4516-8334-1747bebbddf5/HighresScreenshot00002.png",
+        "d1e3a303-334e-4691-a768-155b3584af04/HighresScreenshot00003.png",
+        "da970876-946c-49b2-a92c-fd15c69786fd/HighresScreenshot00004.png",
+        "1ae30483-7d7c-44c8-ab2c-fc8c4cd4d53d/HighresScreenshot00006.png",
+        "864c37ec-7084-439c-82f6-8a185b46cc94/HighresScreenshot00010.png",
+        "1a7d0838-d4c1-4cfc-84f4-1e571c90a6bc/HighresScreenshot00011.png",
+        "fa2499f1-c408-4b97-8c1a-89ab7ac24e1f/HighresScreenshot00012.png",
+        "dabf1bd4-30a8-4e22-9c6a-3baa94e2fbfa/HighresScreenshot00013.png",
+        "fe53a501-4879-48d6-aba0-d87a0a66d83c/HighresScreenshot00014.png",
+        "a834160f-fb5d-43b0-a328-612dcc7f88ab/HighresScreenshot00015.png",
+        "bc8a90ff-0764-4701-8240-a4c34705af47/HighresScreenshot00018.png",
+        "e3f7c69f-7cac-47f5-a0a0-e8505fa2ee14/HighresScreenshot00019.png",
+        "75a3b373-661f-48a3-9692-dba5c7792593/HighresScreenshot00025.png",
+        "b285b05b-06b8-4968-b2fd-306585c81306/HighresScreenshot00033.png"
+      ],
+      "video": {
+        "src": "videos/frank-stone-showreel.mp4",
+        "poster": "videos/frank-stone-showreel.jpg"
+      },
+      "galleryTitle": "Additional Images"
+    },
+    {
+      "slug": "the-last-drop",
+      "title": "The Last Drop",
+      "role": "Level designer",
+      "summary": "2.5D university group project, built out from a game jam prototype",
+      "tagline": "A 2.5D team project, grown from a game jam build. I designed the winter level.",
+      "hero": "ac26b653-8e93-4a3c-9d40-2398132178cf/HighresScreenshot00009.png",
+      "facts": [
+        [
+          "Role",
+          "Level designer"
+        ],
+        [
+          "Context",
+          "Game Studio unit: second-year game designers and developers"
+        ],
+        [
+          "Format",
+          "2.5D, Unreal Engine"
+        ]
+      ],
+      "chapters": [
+        {
+          "h": "The project",
+          "p": [
+            "Our lecturers started a 2.5D game as a quick game jam build. The second-year game designers and developers took it from there, coming up with our own idea and levels on top of it.",
+            "The designers wrote the base story, setting and level layout, so each level flowed into the next in a consistent style."
+          ],
+          "figs": [
+            {
+              "layout": "wide",
+              "items": [
+                {
+                  "yt": "-gAjMlgKXBg",
+                  "c": "Gameplay of my winter level"
+                }
+              ]
+            },
+            {
+              "layout": "slideshow",
+              "items": [
+                "e9953437-b5da-47ff-aabe-8282de2e46a8/LastDrop_Background4x.png",
+                "2617be82-3ce2-4ff9-862b-daa5d450197d/HighresScreenshot00011.png",
+                "8bfe986f-b4bc-4202-878a-422b0e12b598/HighresScreenshot00000.png",
+                "3f34e069-f2ab-4bbf-8415-0eed8515ec49/HighresScreenshot00001.png",
+                "3f1bfc05-0094-4e31-b7f5-c36349d51c13/HighresScreenshot00002.png",
+                "50153505-f459-49e7-8593-e261955de7ca/HighresScreenshot00003.png",
+                "9e4f95bb-8c20-40f4-b31b-aa09cfb295eb/HighresScreenshot00004.png",
+                "9d6f29c7-ff58-4e98-9fd8-b53ded70f2c9/HighresScreenshot00005.png",
+                "6cba299a-8aa6-4413-b613-4476ab62c619/HighresScreenshot00006.png",
+                "670610dd-4bfd-49b1-af21-7c290c6c4b5f/HighresScreenshot00007.png",
+                "d25d1f89-b8e0-4d67-b2ec-7aaa2a0a6b6f/HighresScreenshot00009.png"
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Planning on paper",
+          "p": [
+            "I sketched a 2D mockup of my level sections and their puzzles. A lot changed during development, but the mockup kept my vision for the level clear the whole way through."
+          ],
+          "figs": [
+            {
+              "layout": "wide diagram",
+              "items": [
+                "a48e18a8-17ba-4c1d-a8ce-8cb9a2712976/Artboard+1.jpg"
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Briefing the developers",
+          "p": [
+            "In the first week, another designer and I drew up a gameplay mechanics diagram for the developers and gameplay designers.",
+            "For a conveyor belt section, I wrote a detailed diagram that used reference images from film to show exactly how it should behave."
+          ],
+          "figs": [
+            {
+              "layout": "wide diagram",
+              "items": [
+                "25be1a4b-92f9-440f-96ee-29101e6ba2c6/Screenshot+2026-01-08+163512.png",
+                "0308ba75-3d4b-40f0-b9bf-2ff6ea432be1/Screenshot+2026-01-08+165941.png"
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Building the levels",
+          "p": [
+            "My level is the winter level. Once the mechanics were ready I built and implemented it, helped add mechanics, controls and assets across the game, and found royalty-free music for it. With the developers’ help, the level came together fully working."
+          ]
+        }
+      ],
+      "gallery": [],
+      "video": {
+        "src": "videos/the-last-drop-showreel.mp4",
+        "poster": "videos/the-last-drop-showreel.jpg"
+      }
+    },
+    {
+      "slug": "environmental-storytelling",
+      "title": "Environmental Storytelling",
+      "role": "Project coordinator, level designer, narrative designer",
+      "summary": "Group project: a level about the fall of Skyrim’s Snow Elves",
+      "tagline": "The fall of the Snow Elves, told through the ruins left behind.",
+      "hero": "e7ed5c36-36b1-420f-a027-73cdc56d4698/HighresScreenshot00020.png",
+      "facts": [
+        [
+          "Role",
+          "Project coordinator, level designer, scene dresser, narrative designer"
+        ],
+        [
+          "Team",
+          "Another game designer, 3D artists, comic and concept artists"
+        ],
+        [
+          "Context",
+          "Environmental Storytelling unit, group project"
+        ],
+        [
+          "Setting",
+          "The world of Skyrim"
+        ]
+      ],
+      "chapters": [
+        {
+          "h": "The brief",
+          "p": [
+            "For our Environmental Storytelling unit, my group designed a level set in the world of Skyrim, telling the story of the Snow Elves’ fall and their change into the Falmer.",
+            "I was project coordinator, level designer, scene dresser and narrative designer, working with 3D artists, comic and concept artists and another game designer."
+          ]
+        },
+        {
+          "h": "Reading the level",
+          "p": [
+            "The level starts above ground, just after a Nord attack has killed the settlers. The player wakes in their home and steps out into a city in ruins.",
+            "From there the route leads down: through the dungeons beneath the settlement to the altar, and on into the caves far below the surface."
+          ],
+          "figs": [
+            {
+              "layout": "wide",
+              "items": [
+                {
+                  "video": "videos/environmental-storytelling-gameplay.mp4",
+                  "poster": "videos/environmental-storytelling-gameplay.jpg",
+                  "c": "Full gameplay"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Design decisions",
+          "p": [
+            "I set the level high in the mountains, where the cold and ice cut it off from any nearby settlement. That distance does a lot of the storytelling on its own: nobody is coming to help, and the player feels that isolation from the moment they step outside.",
+            "Outside, I kept the lighting dark and let only two sources break through: the moonlight and the fire from the burning building above. The flames pull the eye towards the destruction, while the cold moonlight leaves everything around it feeling exposed and unsettling.",
+            "Below ground, torches and braziers are the only light, drawing the player deeper into the cave one pool of warmth at a time. I modelled the cave walls to be uneven and protruding, closing the space into tight, cramped passages so it feels like a real cavern pressing in around you rather than a corridor."
+          ]
+        },
+        {
+          "figs": [
+            {
+              "layout": "slideshow",
+              "items": [
+                "6f9831ab-c262-4146-a95e-47930198e82a/HighresScreenshot00024.png",
+                "2d4c7464-8dda-4369-9a3b-ac04f3c84a2c/HighresScreenshot00004.png",
+                "f86e6e38-7d81-4376-9b51-bdbc29a9a286/HighresScreenshot00013.png",
+                "fdfb34f4-e37b-430c-8415-3397e324a67c/HighresScreenshot00014.png",
+                "cc638df9-3e09-4e1e-ae36-f062e4bf1549/HighresScreenshot00015.png",
+                "da9c16eb-74c5-467b-aa42-701557ca3109/HighresScreenshot00016.png",
+                "b941d7ff-3825-4ad1-8526-b450d79814e9/HighresScreenshot00017.png",
+                "084cd181-ca02-4a65-873a-e6ab22601e92/HighresScreenshot00018.png",
+                "98fd0976-eaa8-4f6d-b03e-f4761c452f3b/HighresScreenshot00012.png",
+                "bc51bd58-1896-4566-8cb4-f281c2dbaf3a/HighresScreenshot00011.png",
+                "0c782933-f280-4ffe-99c8-7a34e0c159eb/HighresScreenshot00019.png",
+                "5200ddf9-389a-44c8-9650-9ef1e16fc208/HighresScreenshot00023.png",
+                "4409c011-ab0a-447d-90b4-c43066aa992e/HighresScreenshot00022.png",
+                "6731950b-55bc-4557-bad8-42b87c428433/HighresScreenshot00000.png",
+                "129e717c-7916-4e73-b7b2-00768ec1252f/HighresScreenshot00001.png",
+                "1d3db0be-4c2a-4828-8432-f1a92f71cc1c/HighresScreenshot00002.png",
+                "dab3b59c-b483-4177-a6e8-654a998371da/HighresScreenshot00003.png",
+                "cdd50070-7904-4b64-9f29-eaa5c3d0f8f0/HighresScreenshot00005.png",
+                "b8cf4a6d-3039-4c39-b66e-9229146b54c8/HighresScreenshot00006.png",
+                "d26d4f4c-8ed4-4dfa-b245-9152e8b42805/HighresScreenshot00007.png",
+                "e5d8d4ec-f43d-4070-a856-982f74ddbda1/HighresScreenshot00008.png",
+                "3ea86660-338d-4d55-90f4-b56e3630ef27/HighresScreenshot00009.png",
+                "9c4dcd73-1464-498e-b001-75329252a5f6/HighresScreenshot00010.png",
+                "20b1cc67-874a-455c-af1b-e473c383c1b8/HighresScreenshot00025.png",
+                "d527ccf3-b0df-4018-a031-15f4363082cb/HighresScreenshot00026.png"
+              ]
+            }
+          ]
+        }
+      ],
+      "gallery": [],
+      "video": {
+        "src": "videos/environmental-storytelling-showreel.mp4",
+        "poster": "videos/environmental-storytelling-showreel.jpg"
+      }
+    },
+    {
+      "slug": "rapid-prototyping",
+      "title": "Rapid Prototyping",
+      "role": "Concept design",
+      "summary": "Two quick-fire game concepts",
+      "tagline": "Two fast concepts, one taken all the way to a playable prototype.",
+      "hero": "f71eab6e-43db-47b2-94b9-e99a3c95ee2a/Screenshot+2026-01-09+164141.png",
+      "facts": [
+        [
+          "Role",
+          "Concept design and prototyping"
+        ],
+        [
+          "Format",
+          "Short prototyping briefs"
+        ],
+        [
+          "Tools",
+          "Unreal Engine 5"
+        ]
+      ],
+      "chapters": [
+        {
+          "h": "30-second mini game",
+          "p": [
+            "A quick party game in the spirit of Mario Party and Fall Guys. I took my lead from Robot Wars, which I loved watching as a kid: players pitted against each other in an arena, in an all-out battle.",
+            "I sketched a square or hexagonal arena full of hazards for close-quarters fights, like a wrecking ball, fire and spike traps, speed ramps and trap doors. Then I built a prototype in Unreal Engine 5 with a single vehicle, to show each hazard in action."
+          ],
+          "figs": [
+            {
+              "layout": "wide",
+              "items": [
+                {
+                  "video": "videos/30-sec-mini-game.mp4",
+                  "poster": "videos/30-sec-mini-game.jpg",
+                  "c": "Gameplay prototype in Unreal Engine 5"
+                }
+              ]
+            },
+            {
+              "layout": "grid diagram",
+              "items": [
+                "3b0513a5-e466-433f-b1d1-74a3ca7176fb/Mini+Game+Sketch.jpg",
+                "01e58838-20b4-488f-858c-a1f4fd56bbb1/MiniGame+Sketch+Idea.jpg"
+              ]
+            }
+          ]
+        },
+        {
+          "h": "Wave after wave",
+          "p": [
+            "A game about holding out against waves of enemies. You play a mafia grunt guarding a drug warehouse from intruders, while the police gather evidence and put together a SWAT team to take the warehouse by force."
+          ],
+          "figs": [
+            {
+              "layout": "wide",
+              "items": [
+                {
+                  "video": "videos/wave-after-wave-gameplay.mp4",
+                  "poster": "videos/wave-after-wave-gameplay.jpg",
+                  "c": "High On Your Supply: gameplay"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "gallery": []
+    }
+  ]
+}
+</script>
+
+<script>
+(() => {
+  const DATA = JSON.parse(document.getElementById('site-data').textContent);
+  const S = DATA.settings, P = DATA.person, PROJECTS = DATA.projects;
+  const main = document.getElementById('main');
+  const lb = document.querySelector('.lb');
+  let view = null;          // 'home' or a project slug
+  let firstRender = true;
+  let shots = [];           // images available to the lightbox on the current view
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const key = it => typeof it === 'string' ? it : it.k;
+  const cap = it => typeof it === 'string' ? '' : (it.c || '');
+  const isRemote = k => /^https?:\/\//.test(k);
+  const isCdnKey = k => !isRemote(k) && !k.startsWith('images/') && !k.startsWith('./') && !k.startsWith('/');
+
+  // Local path mirrors the CDN key so the download script and the site agree.
+  function localPath(k) {
+    if (S.local && S.local[k]) return S.local[k];
+    if (isRemote(k)) { const parts = new URL(k).pathname.split('/').filter(Boolean); return 'images/' + parts.slice(-2).join('/'); }
+    return 'images/' + k;
+  }
+  function src(k, w) {
+    if (!isRemote(k) && !isCdnKey(k)) return k;                 // your own file path
+    if (S.assets === 'local') return localPath(k);
+    const url = isRemote(k) ? k.replace(/^http:/, 'https:') : S.cdnBase + k;
+    return url + '?format=' + w + 'w';
+  }
+  function srcset(k) {
+    if (S.assets === 'local' || (!isRemote(k) && !isCdnKey(k))) return '';
+    return [750, 1500, 2500].map(w => src(k, w) + ' ' + w + 'w').join(', ');
+  }
+  const label = k => decodeURIComponent(k.split('/').pop().replace(/\+/g, ' '));
+  const cvUrl = () => S.assets === 'local' ? S.cv.local : S.cv.cdn;
+
+  // An image inside a placeholder that turns into the missing-texture checker if it fails.
+  function img(k, { sizes = '100vw', alt = '', eager = false, cls = '' } = {}) {
+    const set = srcset(k);
+    return `<div class="ph ${cls}" data-label="${esc(label(k))}"><img src="${esc(src(k, 1500))}"${set ? ` srcset="${esc(set)}" sizes="${sizes}"` : ''} alt="${esc(alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" onerror="this.parentNode.classList.add('missing')"></div>`;
+  }
+
+  const ytThumb = id => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+  const ytWatch = id => `https://www.youtube.com/watch?v=${id}`;
+  function ytSrc(id, { muted, start = 0 }) {
+    const q = muted
+      ? { autoplay: 1, mute: 1, loop: 1, playlist: id, controls: 0, playsinline: 1, rel: 0, iv_load_policy: 3, disablekb: 1, start }
+      : { autoplay: 1, mute: 0, controls: 1, playsinline: 1, rel: 0, start: 0 };
+    return `https://www.youtube-nocookie.com/embed/${id}?` + new URLSearchParams(q).toString();
+  }
+  const ytFrame = (id, src, title) => `<iframe src="${src}" title="${esc(title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+
+  function stage({ image, video, title, subtitle, logo, note, cls = '', headingTag = 'h1' }) {
+    const v = video && (video.src || video.embeddable !== false) ? video : null;
+    const link = video && !video.src && video.embeddable === false ? video : null;
+    const hasShot = image || v;
+    return `<section class="stage ${cls} ${hasShot ? '' : 'no-shot'}">
+      ${hasShot ? `<div class="shot">${image ? img(image, { eager: true }) : `<img class="poster" src="${esc(v.src ? (v.poster || '') : ytThumb(v.id))}" alt="">`}${v ? (v.src
+        ? `<div class="vid"><video src="${esc(v.src)}" ${v.poster ? `poster="${esc(v.poster)}"` : ''} muted loop playsinline preload="${REDUCED ? 'none' : 'auto'}" ${REDUCED ? '' : 'autoplay'} aria-label="${esc(title)} show reel"></video></div>`
+        : `<div class="vid" data-id="${esc(v.id)}" data-start="${+v.start || 0}" data-title="${esc(title)}"></div>`) : ''}</div>` : ''}
+      ${v && v.sound !== false ? `<button class="watch" type="button">${REDUCED ? 'Play video' : 'Play with sound'}</button>` : ''}
+      ${link ? `<a class="watch" href="${ytWatch(link.id)}" target="_blank" rel="noopener">Watch the video</a>` : ''}
+      <div class="bar top"></div>
+      <${headingTag} class="stage-title"><span class="t">${esc(title)}</span>${logo ? `<img class="logo" src="${esc(src(logo, 1500))}" alt="" onload="this.parentNode.classList.add('has-logo')" onerror="this.remove()">` : ''}</${headingTag}>
+      ${note && hasShot ? `<p class="shot-note">${esc(note)}</p>` : ''}
+      <div class="bar bottom"><p class="subtitle">${esc(subtitle)}</p></div>
+    </section>`;
+  }
+
+  const captionHtml = p => esc(p.tagline) + (p.heroNote ? `<span class="note">${esc(p.heroNote)}</span>` : '');
+
+  const REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Start the muted loop in the frame, and wire the sound button to swap in the full player.
+  function mountStageVideo() {
+    const st = main.querySelector('.stage'), box = st && st.querySelector('.vid');
+    if (!box) return;
+    const local = box.querySelector('video');
+    if (local) {
+      const btn = st.querySelector('button.watch');
+      local.muted = true;
+      if (!REDUCED) local.play().catch(() => {});
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        if (st.classList.toggle('watching')) {
+          local.muted = false; local.loop = false; local.controls = true;
+          local.currentTime = 0; local.play().catch(() => {});
+          btn.textContent = 'Close video';
+        } else {
+          local.controls = false; local.muted = true; local.loop = true;
+          if (REDUCED) local.pause(); else local.play().catch(() => {});
+          btn.textContent = REDUCED ? 'Play video' : 'Play with sound';
+        }
+      });
+      local.addEventListener('ended', () => { if (st.classList.contains('watching')) btn.click(); });
+      return;
+    }
+    const id = box.dataset.id, start = +box.dataset.start || 0, title = box.dataset.title;
+    const btn = st.querySelector('button.watch');
+    const loop = () => {
+      if (REDUCED) { box.innerHTML = ''; return; }
+      box.innerHTML = ytFrame(id, ytSrc(id, { muted: true, start }), title + ' video');
+      const f = box.querySelector('iframe');
+      f.addEventListener('load', () => setTimeout(() => f.classList.add('ready'), 700));
+    };
+    loop();
+    btn.addEventListener('click', () => {
+      if (st.classList.toggle('watching')) {
+        box.innerHTML = ytFrame(id, ytSrc(id, { muted: false }), title + ' video');
+        btn.textContent = 'Close video';
+        box.querySelector('iframe').focus();
+      } else {
+        btn.textContent = REDUCED ? 'Play video' : 'Play with sound';
+        loop();
+      }
+    });
+  }
+
+  function mountInlineVideos() {
+    main.querySelectorAll('.ytfig button').forEach(b => b.addEventListener('click', () => {
+      const id = b.dataset.yt;
+      b.parentNode.innerHTML = ytFrame(id, ytSrc(id, { muted: false }), b.dataset.title);
+    }));
+  }
+
+  function titleCard(p) {
+    return `<div class="title-card"><div><strong>${esc(p.title)}</strong><span>${esc(p.status || '')}</span></div></div>`;
+  }
+
+  /* ---------------- home ---------------- */
+  function renderHome() {
+    const rows = PROJECTS.map((p, i) => `
+      <li>
+        <a class="work-row" href="#${p.slug}" data-i="${i}">
+          <div class="work-thumb">${p.hero ? img(p.thumb || p.hero, { sizes: '100vw' }) : `<div class="ph" style="height:100%">${titleCard(p)}</div>`}</div>
+          <div class="work-title">${esc(p.title)}</div>
+          <div class="work-meta">${p.status ? `<span class="status">${esc(p.status)}.</span> ` : ''}${esc(p.role)}. ${esc(p.summary)}.</div>
+        </a>
+      </li>`).join('');
+
+    const previews = PROJECTS.map((p, i) => p.hero
+      ? img(p.thumb || p.hero, { sizes: '(max-width: 900px) 0px, 55vw', cls: i === 0 ? 'on' : '' }).replace('class="ph ', `data-i="${i}" class="ph `)
+      : `<div class="ph ${i === 0 ? 'on' : ''}" data-i="${i}">${titleCard(p)}</div>`).join('');
+
+    const skills = P.skills.map(s => `<div><h3>${esc(s.title)}</h3><ul>${s.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`).join('');
+
+    const credits = [
+      ...(S.email ? [{ label: 'Email', text: S.email, url: 'mailto:' + S.email }] : []),
+      ...P.links,
+      ...(S.playableCv ? [{ label: 'Playable CV', text: 'Play it', url: S.playableCv }] : []),
+      { label: 'CV', text: 'Download (PDF)', url: cvUrl() }
+    ].map(l => `<dt>${esc(l.label)}</dt><dd><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.text)}</a></dd>`).join('');
+
+    main.innerHTML = `
+      ${stage({ image: P.heroImage, video: P.heroVideo, title: P.name, subtitle: P.subtitle, cls: 'hero' + (firstRender ? ' intro' : '') })}
+
+      <section id="work" class="block" aria-labelledby="work-h">
+        <div class="wrap">
+          <h2 class="section-title" id="work-h">Projects</h2>
+          <div class="work-grid">
+            <ul class="work-list">${rows}</ul>
+            <div class="work-preview" aria-hidden="true">
+              <div class="preview-frame">${previews}</div>
+              <p class="preview-caption">${captionHtml(PROJECTS[0])}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="block" aria-labelledby="about-h" style="padding-top:0">
+        <div class="wrap about-grid">
+          ${img(P.portrait, { sizes: '(max-width: 900px) 90vw, 40vw', alt: 'Portrait of ' + P.name, cls: 'portrait' })}
+          <div>
+            <h2 class="section-title" id="about-h">About</h2>
+            <div class="prose">${P.about.map(t => `<p>${esc(t)}</p>`).join('')}</div>
+            <div class="cta-row">
+              ${S.playableCv ? `<a class="btn" href="${esc(S.playableCv)}" target="_blank" rel="noopener">Play my CV</a>` : ''}
+              <a class="btn ${S.playableCv ? 'ghost' : ''}" href="${esc(cvUrl())}" target="_blank" rel="noopener">Download my CV (PDF)</a>
+              <a class="btn ghost" href="#contact">Get in touch</a>
+            </div>
+            <div class="skills">${skills}</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="credits" aria-labelledby="contact-h">
+        <div class="wrap">
+          <h2 id="contact-h">Get in touch</h2>
+          <p class="lede">I’m looking for my first role as a cinematic, level or narrative designer, and I’m always happy to talk through any of these projects.</p>
+          <dl class="credit-list">${credits}</dl>
+          ${S.email ? `<p class="fine" style="margin-top:2rem">${esc(S.email)}</p>` : ''}
+          <p class="fine">© ${new Date().getFullYear()} ${esc(P.name)}</p>
+        </div>
+      </section>`;
+
+    // hover / focus a row to "select" its shot in the preview frame
+    const frames = main.querySelectorAll('.preview-frame > [data-i]');
+    const caption = main.querySelector('.preview-caption');
+    main.querySelectorAll('.work-row').forEach(row => {
+      const show = () => {
+        const i = +row.dataset.i;
+        frames.forEach(f => f.classList.toggle('on', +f.dataset.i === i));
+        caption.innerHTML = captionHtml(PROJECTS[i]);
+      };
+      row.addEventListener('mouseenter', show);
+      row.addEventListener('focus', show);
+    });
+    shots = [];
+    mountStageVideo();
+  }
+
+  /* ---------------- case study ---------------- */
+  function figure(it, layout) {
+    if (it && it.video) {
+      const auto = it.autoplay ? 'muted loop data-autoplay preload="metadata"' : 'preload="none"';
+      const ratio = it.ratio ? ` style="aspect-ratio: ${esc(it.ratio)}"` : '';
+      const grow = it.ratio ? ` style="flex-grow: ${it.ratio.split('/').map(Number).reduce((a, b) => a / b)}"` : '';
+      return `<figure${grow}><video class="inline-vid"${ratio} src="${esc(it.video)}" ${it.poster ? `poster="${esc(it.poster)}"` : ''} controls ${auto} playsinline aria-label="${esc(it.c || 'Video')}"></video>${it.c ? `<figcaption>${esc(it.c)}</figcaption>` : ''}</figure>`;
+    }
+    if (it && it.yt) {
+      const c = it.c || 'Video';
+      return `<figure><div class="ytfig"><button type="button" data-yt="${esc(it.yt)}" data-title="${esc(c)}" aria-label="Play video: ${esc(c)}"><img src="${ytThumb(it.yt)}" alt="" loading="lazy"><span class="play">Play video</span></button></div>${it.c ? `<figcaption>${esc(it.c)}</figcaption>` : ''}</figure>`;
+    }
+    const i = shots.length;
+    shots.push(it);
+    const sizes = layout.includes('wide') ? '(max-width: 1360px) 100vw, 1360px' : '(max-width: 700px) 100vw, 33vw';
+    const c = cap(it);
+    if (it && it.ratio) {
+      const g = it.ratio.split('/').map(Number).reduce((a, b) => a / b);
+      return `<figure style="flex-grow: ${g}"><button class="shotbtn" data-shot="${i}" aria-label="View image larger${c ? ': ' + esc(c) : ''}"><div class="ph" style="aspect-ratio: ${esc(it.ratio)}" data-label="${esc(label(key(it)))}"><img src="${esc(src(key(it), 1500))}" alt="${esc(c)}" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('missing')"></div></button>${c ? `<figcaption>${esc(c)}</figcaption>` : ''}</figure>`;
+    }
+    return `<figure><button class="shotbtn" data-shot="${i}" aria-label="View image larger${c ? ': ' + esc(c) : ''}">${img(key(it), { sizes, alt: c })}</button>${c ? `<figcaption>${esc(c)}</figcaption>` : ''}</figure>`;
+  }
+  function slideshow(g) {
+    const slides = g.items.map((it, j) => {
+      const i = shots.length; shots.push(it);
+      return `<figure class="slide ${j ? '' : 'on'}"><button class="shotbtn" data-shot="${i}" aria-label="View image larger">${img(key(it), { sizes: '(max-width: 1360px) 100vw, 1360px', alt: cap(it), eager: j === 0 })}</button></figure>`;
+    }).join('');
+    return `<div class="figs slideshow-wrap" data-ss>
+      <div class="slideshow" aria-roledescription="slideshow" aria-label="Project images">${slides}</div>
+      <div class="ss-controls">
+        <button type="button" data-ss-prev aria-label="Previous image">Prev</button>
+        <span class="ss-count" aria-live="polite">1 / ${g.items.length}</span>
+        <button type="button" data-ss-next aria-label="Next image">Next</button>
+        <button type="button" class="ss-toggle" data-ss-toggle>${REDUCED ? 'Play' : 'Pause'}</button>
+      </div>
+    </div>`;
+  }
+
+  function mountSlideshows() {
+    main.querySelectorAll('[data-ss]').forEach(w => {
+      const slides = [...w.querySelectorAll('.slide')], count = w.querySelector('.ss-count'), tog = w.querySelector('[data-ss-toggle]');
+      let i = 0, timer = null, playing = !REDUCED, hover = false;
+      const go = n => { slides[i].classList.remove('on'); i = (n + slides.length) % slides.length; slides[i].classList.add('on'); count.textContent = `${i + 1} / ${slides.length}`; };
+      const tick = () => { if (!hover && document.visibilityState === 'visible') go(i + 1); };
+      const sync = () => { clearInterval(timer); timer = playing ? setInterval(tick, 4500) : null; tog.textContent = playing ? 'Pause' : 'Play'; };
+      w.querySelector('[data-ss-prev]').addEventListener('click', () => { go(i - 1); sync(); });
+      w.querySelector('[data-ss-next]').addEventListener('click', () => { go(i + 1); sync(); });
+      tog.addEventListener('click', () => { playing = !playing; sync(); });
+      const ss = w.querySelector('.slideshow');
+      ss.addEventListener('mouseenter', () => hover = true);
+      ss.addEventListener('mouseleave', () => hover = false);
+      sync();
+    });
+  }
+
+  // Looping clips play while on screen and pause when scrolled away.
+  function mountAutoVideos() {
+    const vids = [...main.querySelectorAll('video[data-autoplay]')];
+    if (!vids.length || REDUCED || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      const v = e.target;
+      if (e.isIntersecting) { v.muted = true; v.play().catch(() => {}); } else v.pause();
+    }), { threshold: 0.35 });
+    vids.forEach(v => io.observe(v));
+  }
+
+  function figGroup(g) {
+    if (g.layout.includes('slideshow')) return slideshow(g);
+    return `<div class="figs ${esc(g.layout)}">${g.items.map(it => figure(it, g.layout)).join('')}</div>`;
+  }
+
+  function renderCase(p) {
+    shots = [];
+    const idx = PROJECTS.indexOf(p);
+    const prev = PROJECTS[(idx - 1 + PROJECTS.length) % PROJECTS.length];
+    const next = PROJECTS[(idx + 1) % PROJECTS.length];
+
+    const chapters = p.chapters.map(ch => `
+      <section class="chapter">
+        ${ch.h ? `<h2>${esc(ch.h)}</h2>
+        <div class="prose">
+          ${(ch.p || []).map(t => `<p>${esc(t)}</p>`).join('')}
+          ${ch.roles ? `<ul class="roles">${ch.roles.map(([r, d]) => `<li><strong>${esc(r)}</strong><span>${esc(d)}</span></li>`).join('')}</ul>` : ''}
+        </div>` : ''}
+        ${(ch.figs || []).map(figGroup).join('')}
+      </section>`).join('');
+
+    const gallery = p.gallery && p.gallery.length ? `
+      <section class="chapter gallery-head">
+        <h2>${esc(p.galleryTitle || 'More from the project')}</h2>
+        <div></div>
+        ${figGroup({ layout: 'grid', items: p.gallery })}
+      </section>` : '';
+
+    main.innerHTML = `
+      <article>
+        ${stage({ image: p.hero, video: p.video, title: p.title, subtitle: p.tagline, logo: p.logo, note: p.heroNote, cls: 'case-hero' })}
+        <div class="wrap case-body">
+          <a class="back" href="#work">All projects</a>
+          <dl class="facts">${p.facts.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
+          ${chapters}
+          ${gallery}
+          <nav class="case-nav" aria-label="More projects">
+            <a href="#${prev.slug}"><small>Previous</small><strong>${esc(prev.title)}</strong></a>
+            <a class="next" href="#${next.slug}"><small>Next</small><strong>${esc(next.title)}</strong></a>
+          </nav>
+        </div>
+      </article>`;
+
+    main.querySelectorAll('[data-shot]').forEach(b => b.addEventListener('click', () => openLb(+b.dataset.shot)));
+    mountStageVideo();
+    mountInlineVideos();
+    mountSlideshows();
+    mountAutoVideos();
+  }
+
+  /* ---------------- lightbox ---------------- */
+  let lbi = 0;
+  const lbPh = lb.querySelector('.lb-ph'), lbImg = lbPh.querySelector('img');
+  lbImg.addEventListener('error', () => lbPh.classList.add('missing'));
+  function showLb() {
+    const it = shots[lbi], k = key(it);
+    lbPh.classList.remove('missing');
+    lbPh.dataset.label = label(k);
+    lbImg.removeAttribute('srcset');
+    lbImg.src = src(k, 2500);
+    lbImg.alt = cap(it);
+    lb.querySelector('.lb-cap').textContent = cap(it);
+    lb.querySelector('.lb-count').textContent = `${lbi + 1} of ${shots.length}`;
+  }
+  function openLb(i) { lbi = i; showLb(); try { lb.showModal(); } catch (e) { lb.setAttribute('open', ''); } }
+  function step(d) { lbi = (lbi + d + shots.length) % shots.length; showLb(); }
+  lb.addEventListener('click', e => {
+    const a = e.target.closest('[data-lb]');
+    if (a) { a.dataset.lb === 'close' ? lb.close() : step(a.dataset.lb === 'next' ? 1 : -1); return; }
+    if (e.target === lb || e.target.classList.contains('lb-stage')) lb.close();
+  });
+  lb.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') step(1);
+    if (e.key === 'ArrowLeft') step(-1);
+  });
+
+  /* ---------------- routing ---------------- */
+  // A project slug in the hash opens its case study; anything else is a spot on the home page.
+  function route() {
+    const h = decodeURIComponent(location.hash.slice(1));
+    const p = PROJECTS.find(x => x.slug === h);
+    if (p) {
+      if (view !== p.slug) { renderCase(p); view = p.slug; }
+      document.title = `${p.title} | ${P.name}, game designer`;
+      window.scrollTo(0, 0);
+    } else {
+      if (view !== 'home') { renderHome(); view = 'home'; }
+      document.title = `${P.name}, game designer`;
+      const target = h && h !== 'top' && document.getElementById(h);
+      if (target) target.scrollIntoView(); else window.scrollTo(0, 0);
+    }
+    firstRender = false;
+  }
+  window.addEventListener('hashchange', route);
+
+  document.querySelector('[data-cv]').href = S.playableCv || cvUrl();
+  document.querySelector('[data-skip]').addEventListener('click', e => { e.preventDefault(); main.focus(); main.scrollIntoView(); });
+  document.querySelector('[data-home]').addEventListener('click', e => {
+    if (!location.hash || location.hash === '#top') { e.preventDefault(); window.scrollTo({ top: 0 }); }
+  });
+
+  route();
+})();
+</script>
+</body>
+</html>
