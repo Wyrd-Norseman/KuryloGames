@@ -96,8 +96,7 @@ body.qte #cards,body.qte #topStack{display:none}
   body.touch #topStack{width:calc(100vw - 24px)}
 }
 @media (max-width:480px){
-  #stick{width:122px;height:122px}
-  #stick .knob{width:52px;height:52px;margin:-26px 0 0 -26px}
+  #dpad{width:150px;height:150px}
   .tb{width:50px;height:50px;font-size:11.5px}
   #acts{width:196px;height:130px}
   #acts [data-k=jump]{width:64px;height:64px;font-size:12.5px}
@@ -149,18 +148,18 @@ body.touch #contact{bottom:auto;top:calc(max(10px,env(safe-area-inset-top)) + 46
 #touch{position:fixed;left:auto;right:0;bottom:0;height:170px;z-index:5;display:none;justify-content:flex-end;align-items:flex-end;padding:0 max(16px,calc(env(safe-area-inset-right) + 10px)) max(28px,calc(env(safe-area-inset-bottom) + 20px)) 0;pointer-events:none;touch-action:none;-webkit-user-select:none;user-select:none}
 body.touch #touch{display:flex}
 body.qte #touch{display:none}
-/* floating joystick: the base jumps to wherever the thumb lands (kept clear of the screen edges / iOS gesture zones) */
-#stickZone{position:fixed;left:0;bottom:0;width:50vw;height:min(320px,62vh);z-index:5;display:none;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-body.touch #stickZone{display:block}
-body.qte #stickZone,body.suds #stickZone{display:none}
-#stick{position:absolute;left:max(30px,calc(env(safe-area-inset-left) + 18px));bottom:max(30px,calc(env(safe-area-inset-bottom) + 22px));width:136px;height:136px;touch-action:none;pointer-events:none;transition:opacity .2s}
-#stick.active{opacity:1}
-#stick .base{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 45%,rgba(40,44,80,.55),rgba(14,16,34,.6));border:2px solid rgba(255,255,255,.25);box-shadow:inset 0 0 18px rgba(0,0,0,.35)}
-#stick .knob{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff6d1,#ffcc4d 55%,#c48a1c);border:3px solid rgba(20,18,40,.7);box-shadow:0 4px 12px rgba(0,0,0,.45);transition:transform .12s ease-out;will-change:transform}
-#stick.active .knob{transition:none}
-#stick .ar{position:absolute;font-style:normal;font-size:13px;color:rgba(255,255,255,.45);pointer-events:none;transition:color .1s}
-#stick .ar.l{left:10px;top:50%;transform:translateY(-50%)}#stick .ar.r{right:10px;top:50%;transform:translateY(-50%)}#stick .ar.d{bottom:8px;left:50%;transform:translateX(-50%)}
-#stick .ar.on{color:var(--gold)}
+/* fixed D-pad (bottom-left). One touch area: slide your thumb between arrows without lifting it. */
+#dpad{position:fixed;left:max(14px,calc(env(safe-area-inset-left) + 8px));bottom:max(18px,calc(env(safe-area-inset-bottom) + 12px));width:164px;height:164px;z-index:5;display:none;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+body.touch #dpad{display:block}
+body.qte #dpad,body.suds #dpad{display:none}
+#dpad .arm{position:absolute;display:grid;place-items:center;background:linear-gradient(180deg,rgba(52,56,96,.78),rgba(22,24,48,.82));border:2px solid rgba(255,255,255,.22);color:rgba(255,255,255,.75);font:900 18px var(--font);pointer-events:none;transition:background .06s,color .06s,transform .06s}
+#dpad .arm.u{left:33.5%;top:6%;width:33%;height:31%;border-radius:12px 12px 4px 4px;border-bottom:0}
+#dpad .arm.d{left:33.5%;bottom:6%;width:33%;height:31%;border-radius:4px 4px 12px 12px;border-top:0}
+#dpad .arm.l{top:33.5%;left:6%;height:33%;width:31%;border-radius:12px 4px 4px 12px;border-right:0}
+#dpad .arm.r{top:33.5%;right:6%;height:33%;width:31%;border-radius:4px 12px 12px 4px;border-left:0}
+#dpad .hub{position:absolute;left:33.5%;top:33.5%;width:33%;height:33%;background:rgba(22,24,48,.82);border-top:2px solid rgba(255,255,255,.06);border-bottom:2px solid rgba(255,255,255,.06);pointer-events:none}
+#dpad .hub::after{content:'';position:absolute;inset:30%;border-radius:50%;background:rgba(255,255,255,.12)}
+#dpad .arm.on{background:linear-gradient(180deg,#ffe38a,#ffcc4d);color:#2a2008;transform:scale(.96)}
 #acts{pointer-events:auto;position:relative;width:240px;height:146px;touch-action:none}
 .tb{width:62px;height:62px;border-radius:50%;background:rgba(18,20,42,.55);border:2px solid rgba(255,255,255,.28);color:#fff;font:800 13px var(--font);display:grid;place-items:center;-webkit-user-select:none;user-select:none;touch-action:none}
 .tb.on{background:rgba(255,204,77,.4);border-color:var(--gold)}
@@ -239,7 +238,21 @@ body.touch #signPortrait{width:172px;height:244px}
 body.touch #signModal .portrait{width:180px}
 body.touch #signModal .lookcap{font-size:9.5px;padding:2px 7px}
 #signModal .signwrap{width:min(860px,100%)}
-@media (max-width:560px){#signModal .signwrap{flex-direction:column;align-items:center;gap:4px}#signModal .signwrap.talk .signcard::before,#signModal .signwrap.talk .signcard::after{display:none}#signPortrait{width:140px;height:200px}#signModal .portrait{width:150px}#signModal .signcard{width:100%}}
+@media (max-width:560px){
+  /* phones: character stands beside the prompt (not above it), both pinned near the top */
+  #signModal .signwrap{flex-direction:row;align-items:flex-end;gap:6px;padding:0 2px}
+  #signPortrait,body.touch #signPortrait{width:112px;height:160px}
+  #signModal .portrait,body.touch #signModal .portrait{width:104px;margin-left:-4px}
+  #signModal .signcard{flex:1 1 auto;width:auto}
+  body.touch #signModal .signcard{padding:12px 13px 10px}
+  body.touch #signModal h3{font-size:16px;margin:6px 0 4px}
+  body.touch #signModal .lines p{font-size:13px;line-height:1.42;margin:4px 0}
+  #signModal .hint{margin-top:8px;padding-top:8px;font-size:11.5px;justify-content:flex-end}
+  #signModal .hint #signHint{display:none}
+  #signModal .go{padding:7px 11px;font-size:12.5px}
+  #signModal .signwrap.talk .signcard::before{bottom:26px}#signModal .signwrap.talk .signcard::after{bottom:27px}
+}
+@media (max-width:360px){#signPortrait,body.touch #signPortrait{width:92px;height:132px}#signModal .portrait,body.touch #signModal .portrait{width:88px}}
 #signModal.min{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;transition:background .3s}
 #signModal.min .signwrap{transform:translate(var(--dx),var(--dy)) scale(.08);opacity:0}
 @keyframes signin{from{transform:scale(.86);opacity:0}to{transform:none;opacity:1}}
@@ -444,7 +457,7 @@ body.touch .sx-keys{display:none}
   </div>
 </div>
 
-<div id="stickZone" aria-hidden="true"><div id="stick"><div class="base"><i class="ar l">◀</i><i class="ar r">▶</i><i class="ar d">▼</i><div class="knob"></div></div></div></div>
+<div id="dpad" aria-hidden="true"><div class="arm u">▲</div><div class="arm l">◀</div><div class="hub"></div><div class="arm r">▶</div><div class="arm d">▼</div></div>
 <div id="touch" aria-hidden="true">
   <div id="acts">
     <div class="tb" data-k="act">ACT</div>
@@ -746,7 +759,111 @@ const Sound = (() => {
     honk:()=>tone(430,290,.16,'sawtooth',.18), dig:()=>tone(120,55,.12,'triangle',.45),
     swap:()=>tone(440,880,.12,'sine',.3), tick:()=>tone(1050,0,.04,'square',.14), cp:()=>tone(700,1100,.15,'sine',.25)
   };
-  return { play:n=>{ try{ fx[n] && fx[n](); }catch(e){} }, toggle:()=>(muted=!muted), unlock:()=>{ try{ensure();}catch(e){} } };
+  // =================== MUSIC: four original chiptune loops ===================
+  //   adventure (main level) · tron (Delivery Run) · sim (Suds & Supply) · party (end-of-game dance)
+  const mtof = m => 440*Math.pow(2, (m - 69)/12);
+  let noise = null, bus = null, pulses = {};
+  function getBus(c){ if (!bus){ bus = c.createGain(); bus.gain.value = 0.48; bus.connect(master); } return bus; }
+  function getNoise(c){ if (noise) return noise; noise = c.createBuffer(1, c.sampleRate*0.3, c.sampleRate); const d = noise.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random()*2 - 1; return noise; }
+  function pulse(c, duty){ if (pulses[duty]) return pulses[duty]; const n = 40, re = new Float32Array(n), im = new Float32Array(n);
+    for (let k = 1; k < n; k++) re[k] = 2/(k*Math.PI)*Math.sin(k*Math.PI*duty); return (pulses[duty] = c.createPeriodicWave(re, im)); }
+  // one note: type can be an oscillator type or 'p25' / 'p12' (narrow pulse waves for that NES sound)
+  function note(c, t, f, dur, type, vol, o){
+    o = o || {}; const osc = c.createOscillator(), g = c.createGain();
+    if (type === 'p25' || type === 'p12') osc.setPeriodicWave(pulse(c, type === 'p25' ? .25 : .125)); else osc.type = type;
+    osc.frequency.setValueAtTime(f, t); if (o.slide) osc.frequency.exponentialRampToValueAtTime(o.slide, t + dur);
+    if (o.detune) osc.detune.value = o.detune;
+    const atk = o.atk || 0.004;
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + atk);
+    if (o.hold !== false) g.gain.setValueAtTime(vol, t + dur*(o.hold || 0.55));
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    let node = osc;
+    if (o.lp){ const f2 = c.createBiquadFilter(); f2.type = 'lowpass'; f2.Q.value = o.q || 6; f2.frequency.setValueAtTime(o.lp, t); if (o.lpTo) f2.frequency.exponentialRampToValueAtTime(o.lpTo, t + dur); osc.connect(f2); node = f2; }
+    node.connect(g); g.connect(getBus(c)); osc.start(t); osc.stop(t + dur + .03);
+  }
+  function hit(c, t, dur, vol, hp, lp){ const src = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); src.buffer = getNoise(c); f.type = lp ? 'bandpass' : 'highpass'; f.frequency.value = hp;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur); src.connect(f); f.connect(g); g.connect(getBus(c)); src.start(t, Math.random()*0.05); src.stop(t + dur + .02); }
+  const kick = (c, t, v) => note(c, t, 150, 0.13, 'sine', v, {slide:42, hold:false});
+
+  // ---- party: bouncy I–vi–IV–V in C, 126 bpm (matches the dance) ----
+  const P_LEAD = [76,79,84,79, 76,79,84,86,   88,84,81,84, 88,86,84,81,   77,81,84,81, 77,81,86,84,   83,86,91,86, 83,84,86,0,
+                  76,79,84,88, 91,88,84,79,   81,84,88,93, 91,88,84,88,   89,88,86,84, 81,84,86,89,   91,0,91,89, 88,86,84,0];
+  const P_ROOT = [48,45,41,43, 48,45,41,43];
+  // ---- adventure: heroic D major gallop, D–Bm–G–A, 116 bpm. Bars 1–8 melody, 9–16 arpeggio break ----
+  const A_LEAD = [74,0,78,81, 86,0,85,81,   83,0,81,78, 76,78,81,0,   79,0,83,86, 88,86,83,79,   81,0,85,88, 85,81,76,0,
+                  86,0,85,86, 88,86,81,78,   83,85,86,83, 78,0,74,78,  79,81,83,86, 91,88,86,83,  85,0,81,0, 85,86,88,0];
+  const A_ROOT = [50,47,43,45], A_CHORD = [[62,66,69],[59,62,66],[55,59,62],[57,61,64]];
+  const A_ARP = [0,1,2,1, 0,2,1,2];
+  // ---- tron: driving A-minor synthwave, Am–F–C–G, 124 bpm in 16ths. Bars 1–4 arp, 5–8 arp + lead ----
+  const T_ROOT = [33,29,36,31], T_CHORD = [[69,72,76],[65,69,72],[67,72,76],[67,71,74]];
+  const T_ARP = [0,1,2,1, 2,1,0,1, 0,1,2,3, 2,1,0,1];
+  const T_LEAD = [[76,8],[81,8], [84,12],[81,4], [79,8],[76,8], [74,8],[71,6],[0,2]];   // [note, length in 16ths]
+  const T_LEADSEQ = (() => { const a = Array(64).fill(null); let p = 0; for (const [n, l] of T_LEAD){ a[p] = [n, l]; p += l; } return a; })();
+  // ---- sim: easy-going jazzy "management sim" groove, Cmaj7–Am7–Dm7–G7, 104 bpm, swung ----
+  const S_MEL = [76,79,83,79, 81,79,76,0,   84,83,81,79, 76,79,81,0,   77,81,84,81, 86,84,81,77,   79,83,86,89, 88,86,83,79,
+                 0,0,76,0, 79,0,83,81,      0,0,84,0, 81,0,79,76,      0,0,77,0, 81,0,84,86,      83,0,79,0, 77,0,74,0];
+  const S_WALK = [[48,52,55,57],[45,48,52,55],[50,53,57,48],[43,47,50,53]];
+  const S_CHORD = [[64,67,71],[60,64,67],[65,69,72],[65,71,74]];
+
+  const TRACKS = {
+    party: { step: 60/126/2, len: 64, play(c, t, i, S){
+      const bar = Math.floor(i/8) % 8, pos = i % 8, m = P_LEAD[i];
+      if (m) note(c, t, mtof(m), S*0.9, 'square', 0.15);
+      if (m && pos % 2 === 0) note(c, t + S*0.5, mtof(m + 12), S*0.35, 'square', 0.05);
+      const r = P_ROOT[bar]; note(c, t, mtof(pos % 2 ? r + 12 : r), S*0.85, 'triangle', 0.42);
+      if (pos === 0 || pos === 4) kick(c, t, 0.75);
+      if (pos === 2 || pos === 6) hit(c, t, 0.12, 0.3, 1400);
+      hit(c, t + (pos % 2 ? 0 : S*0.5), 0.035, 0.1, 7000);
+      if (bar === 7 && pos === 7) [72,76,79].forEach(n => note(c, t, mtof(n + 12), S*0.9, 'square', 0.07));
+    }},
+    adventure: { step: 60/116/2, len: 128, play(c, t, i, S){
+      const bar = Math.floor(i/8), pos = i % 8, ch = bar % 4;
+      if (bar < 8){ const m = A_LEAD[i]; if (m) note(c, t, mtof(m), S*(A_LEAD[i + 1] === 0 ? 1.8 : 0.9), 'p25', 0.12); }
+      else { const n = A_CHORD[ch][A_ARP[pos] % 3] + (A_ARP[pos] === 2 && pos > 4 ? 12 : 0); note(c, t, mtof(n + 12), S*0.8, 'p12', 0.07);
+             if (pos === 0) note(c, t, mtof(A_CHORD[ch][2] + 12), S*7.5, 'triangle', 0.06, {atk:0.08, hold:0.2}); }
+      const r = A_ROOT[ch]; const bassN = [r, 0, r + 12, r + 7, r, r + 7, r + 12, r + 7][pos];   // galloping bass
+      if (bassN) note(c, t, mtof(bassN), S*0.8, 'triangle', 0.36);
+      if (pos === 0 || pos === 3 || pos === 4) kick(c, t, 0.45);
+      if (pos === 2 || pos === 6) hit(c, t, 0.09, 0.14, 1800);
+      if (pos % 2 === 1) hit(c, t, 0.03, 0.05, 8000);
+    }},
+    tron: { step: 60/124/4, len: 128, play(c, t, i, S){
+      const bar = Math.floor(i/16), pos = i % 16, ch = bar % 4, half = bar >= 4;
+      const r = T_ROOT[ch];
+      note(c, t, mtof(pos % 2 ? r + 12 : r), S*0.9, 'sawtooth', 0.2, {lp:1600, lpTo:220, q:8, hold:false});        // pulsing filtered bass
+      const a = T_ARP[pos], cn = a === 3 ? T_CHORD[ch][0] + 12 : T_CHORD[ch][a];
+      note(c, t, mtof(cn), S*0.7, 'square', half ? 0.045 : 0.06, {lp:2600, q:2});                                 // 16th arpeggio
+      if (half){ const L = T_LEADSEQ[i - 64]; if (L && L[0]){ note(c, t, mtof(L[0]), S*L[1]*0.95, 'sawtooth', 0.07, {atk:0.04, hold:0.7, lp:3200, q:1, detune:-6});
+                                                   note(c, t, mtof(L[0]), S*L[1]*0.95, 'sawtooth', 0.05, {atk:0.04, hold:0.7, lp:3200, q:1, detune:7}); } }
+      if (pos % 4 === 0) kick(c, t, 0.65);                                                                         // four on the floor
+      if (pos === 4 || pos === 12) hit(c, t, 0.16, 0.22, 1200);
+      if (pos % 4 === 2) hit(c, t, 0.07, 0.09, 6500);                                                             // off-beat open hat
+    }},
+    sim: { step: 60/104/2, len: 64, play(c, t, i, S){
+      const bar = Math.floor(i/8) % 8, pos = i % 8, ch = bar % 4, sw = pos % 2 ? S*0.3 : 0, tt = t + sw;            // swing the off-beats
+      const m = S_MEL[i]; if (m) { note(c, tt, mtof(m), S*1.4, 'sine', 0.21, {hold:false}); note(c, tt, mtof(m + 12), S*0.5, 'triangle', 0.04, {hold:false}); }   // marimba-ish
+      if (pos % 2 === 0) note(c, t, mtof(S_WALK[ch][pos/2]), S*1.7, 'triangle', 0.44);                           // walking bass
+      if (pos === 3 || pos === 7) S_CHORD[ch].forEach(n => note(c, tt, mtof(n), S*0.9, 'square', 0.022, {lp:1400, q:1}));  // soft comp stabs
+      hit(c, tt, 0.05, pos % 2 ? 0.05 : 0.03, 6000);                                                              // shaker
+      if (pos === 2 || pos === 6) note(c, t, 1750, 0.03, 'square', 0.05, {hold:false});                           // rim click
+      if (pos === 0 && bar % 2 === 0) kick(c, t, 0.35);
+    }}
+  };
+  let cur = null, mTimer = 0, mNext = 0; const mStep = {};
+  function track(name){
+    if (!TRACKS[name]) name = null;
+    if (name === cur) return; cur = name; clearInterval(mTimer);
+    if (!name) return;
+    const c = ensure(); if (!c){ cur = null; return; }
+    const tr = TRACKS[name]; if (name !== 'party') mStep[name] = 0; else mStep[name] = mStep[name] || 0;
+    mNext = c.currentTime + 0.08;
+    mTimer = setInterval(() => {
+      if (muted){ mNext = c.currentTime + 0.05; return; }
+      if (mNext < c.currentTime - 0.3) mNext = c.currentTime + 0.05;          // tab was throttled: don't fire a burst of catch-up notes
+      while (mNext < c.currentTime + 0.15){ try { tr.play(c, mNext, mStep[name], tr.step); } catch(e){} mNext += tr.step; mStep[name] = (mStep[name] + 1) % tr.len; }
+    }, 25);
+  }
+  return { play:n=>{ try{ fx[n] && fx[n](); }catch(e){} }, toggle:()=>(muted=!muted), unlock:()=>{ try{ensure();}catch(e){} }, track:n=>{ try{ track(n); }catch(e){} } };
 })();
 
 /* =========================================================
@@ -823,13 +940,11 @@ S(4590,330,60,14,{type:'stamp'});             // stamp 1
 S(4490,245,70,14,{type:'paper', set:1});      // L2
 S(4590,160,60,14,{type:'stamp'});             // stamp 2
 S(4490,75,70,14,{type:'ink', set:0});         // L3
-S(4590,-10,60,14,{type:'stamp'});             // stamp 3
-S(4490,-95,70,14,{type:'paper', set:1});      // L4
-S(4590,-180,60,14,{type:'paper', set:1});     // summit (keycard ledge)
+S(4590,-10,60,14,{type:'stamp'});             // stamp 3 — top of the climb (keycard ledge)
 S(4686,-560,20,1060,{type:'ink', set:0});     // full-height redaction wall in front of the vault
 const vault = S(4712,-560,28,1060,{type:'barrier'});   // vault door (drawn in decor), opens with the keycard
 const ndaBlocks = solids.filter(b => b.type === 'ink' || b.type === 'paper');
-const nda = {mode:0, lastPad:null, card:{x:4620, y:-212, got:false}, openT:0, flip:-9, cam:{x:4678, y:-262, a:2.2, alarmT:0, spotT:-9}};
+const nda = {mode:0, lastPad:null, card:{x:4620, y:-44, got:false}, openT:0, flip:-9, cam:{x:4678, y:-262, a:2.2, alarmT:0, spotT:-9}};
 for (const b of ndaBlocks) b.off = b.set !== nda.mode;
 // Frank Stone
 G(5300,6060);                                // solid floor all the way to the exit (no second pit)
@@ -957,7 +1072,8 @@ const KEYMAP = {ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',Arr
   ArrowDown:'down',KeyS:'down',KeyJ:'atk',KeyF:'atk',ShiftLeft:'dash',ShiftRight:'dash',KeyK:'dash',KeyC:'flash',KeyL:'flash',KeyE:'act',KeyQ:'act'};
 const QTEKEYS = {ArrowLeft:'L',KeyA:'L',ArrowRight:'R',KeyD:'R',ArrowUp:'U',KeyW:'U',ArrowDown:'D',KeyS:'D'};
 const keyHeld = {}, touchHeld = {}, latchP = {}, latchR = {};
-const held = k => !!(keyHeld[k] || touchHeld[k]);
+const dpadHeld = {};
+const held = k => !!(keyHeld[k] || touchHeld[k] || dpadHeld[k]);
 const pressed = k => !!latchP[k];
 const released = k => !!latchR[k];
 function press(k){ if (!held(k)) latchP[k] = true; }
@@ -997,45 +1113,38 @@ window.addEventListener('keyup', e => { const k = KEYMAP[e.code]; if (k){ keyHel
 window.addEventListener('blur', () => { for (const k in keyHeld) keyHeld[k] = false; releaseAllTouch(); });
 
 // touch: d-pad tracks the finger so you can slide between buttons
-// touch: virtual joystick (drag the knob left/right to run, down to drop/dig)
-// Uses Touch Events on touch devices (most reliable on iOS), Pointer Events only for mouse/pen.
-// Safety nets: a new thumb always takes over, and the stick resets whenever its finger is no longer on the screen.
-const stick = $('stick'), knob = stick.querySelector('.knob'), stickArrows = {left: stick.querySelector('.ar.l'), right: stick.querySelector('.ar.r'), down: stick.querySelector('.ar.d')};
-let stickId = null, stickIsTouch = false, stickC = {x:0, y:0}, stickOff = {x:0, y:0}, stickDir = 0;
+// touch: fixed D-pad. ◀ ▶ run, ▼ drop/dig, ▲ jump. Your thumb can slide between arrows without lifting.
+// Touch Events on touch devices (most reliable on iOS), Pointer Events only for mouse/pen.
+// Safety nets: a new thumb always takes over, and the pad lets go whenever its finger is no longer on the screen.
+const dpad = $('dpad'), dArms = {left: dpad.querySelector('.arm.l'), right: dpad.querySelector('.arm.r'), down: dpad.querySelector('.arm.d'), jump: dpad.querySelector('.arm.u')};
+let stickId = null, stickIsTouch = false;
 function stickApply(want){
-  for (const k of ['left','right','down']){ if (want[k] && !touchHeld[k]) press(k); if (!want[k] && touchHeld[k]) release(k); touchHeld[k] = !!want[k]; stickArrows[k].classList.toggle('on', !!want[k]); }
+  // the pad keeps its own held-state so it never cancels a key the jump/action buttons are holding
+  for (const k of ['left','right','down','jump']){
+    if (want[k] && !dpadHeld[k]){ if (!held(k)) press(k); dpadHeld[k] = true; }
+    else if (!want[k] && dpadHeld[k]){ dpadHeld[k] = false; if (!held(k)) release(k); }
+    dArms[k].classList.toggle('on', !!want[k]);
+  }
 }
 function stickMove(x, y){
-  const R = (stick.clientWidth/2 - 12)*0.7;              // short throw: less thumb travel to change direction
-  let dx = x - stickC.x, dy = y - stickC.y; const d = Math.hypot(dx, dy);
-  // the base follows the thumb when it overshoots, so reversing direction responds instantly
-  if (d > R){
-    const k = (d - R)/d; stickC.x += dx*k; stickC.y += dy*k; dx = x - stickC.x; dy = y - stickC.y;
-    stick.style.left = (stickC.x - stickOff.x) + 'px'; stick.style.top = (stickC.y - stickOff.y) + 'px';
-  }
-  knob.style.transform = `translate(${dx}px,${dy}px)`;
-  // small dead zone with a little hysteresis so it doesn't flicker at the edge
-  const on = R*0.2, off = R*0.1;
-  if (stickDir === 1 ? dx < off : stickDir === -1 ? dx > -off : true) stickDir = dx > on ? 1 : dx < -on ? -1 : 0;
-  stickApply({ left: stickDir === -1, right: stickDir === 1, down: dy > R*0.55 && dy > Math.abs(dx)*0.75 });
+  const r = dpad.getBoundingClientRect(), cx = r.left + r.width/2, cy = r.top + r.height/2;
+  const dx = x - cx, dy = y - cy, dead = r.width*0.09;
+  const horiz = Math.abs(dx) > dead && Math.abs(dx) >= Math.abs(dy)*0.55;
+  stickApply({
+    left: horiz && dx < 0, right: horiz && dx > 0,
+    down: dy > dead && dy > Math.abs(dx)*0.6,
+    jump: dy < -dead && -dy > Math.abs(dx)*0.6
+  });
 }
-function stickReset(){ stickId = null; stickIsTouch = false; stickDir = 0; stick.classList.remove('active'); knob.style.transform = ''; stick.style.left = stick.style.top = stick.style.bottom = ''; stickApply({}); }
-const stickZone = $('stickZone');
+function stickReset(){ stickId = null; stickIsTouch = false; stickApply({}); }
 function stickStart(id, isTouch, x, y){
   if (stickId !== null) stickReset();                      // a fresh thumb always takes over (never get locked out)
-  stickId = id; stickIsTouch = isTouch; stickDir = 0;
-  // centre the joystick under the thumb, but never closer than ~75px to the left/bottom edges
-  const z = stickZone.getBoundingClientRect(), half = stick.offsetWidth/2;
-  const cx = clamp(x, z.left + half + 22, z.right - half), cy = clamp(y, z.top + half, window.innerHeight - half - 34);
-  stickOff = {x: z.left + half, y: z.top + half};
-  stick.style.left = (cx - stickOff.x) + 'px'; stick.style.top = (cy - stickOff.y) + 'px'; stick.style.bottom = 'auto';
-  stickC = {x: cx, y: cy};
-  stick.classList.add('active'); stickMove(x, y); Sound.unlock();
+  stickId = id; stickIsTouch = isTouch; stickMove(x, y); Sound.unlock();
 }
 const findTouch = (list, id) => { for (let i = 0; i < list.length; i++) if (list[i].identifier === id) return list[i]; return null; };
-stickZone.addEventListener('touchstart', e => { if (e.cancelable) e.preventDefault(); const t = e.changedTouches[0]; if (t) stickStart(t.identifier, true, t.clientX, t.clientY); }, {passive:false});
-stickZone.addEventListener('touchmove', e => { if (e.cancelable) e.preventDefault(); if (!stickIsTouch) return; const t = findTouch(e.changedTouches, stickId) || findTouch(e.touches, stickId); if (t) stickMove(t.clientX, t.clientY); }, {passive:false});
-// any touch ending anywhere: if the joystick's finger is gone, let go; if no fingers remain, release every touch control
+dpad.addEventListener('touchstart', e => { if (e.cancelable) e.preventDefault(); const t = e.changedTouches[0]; if (t) stickStart(t.identifier, true, t.clientX, t.clientY); }, {passive:false});
+dpad.addEventListener('touchmove', e => { if (e.cancelable) e.preventDefault(); if (!stickIsTouch) return; const t = findTouch(e.changedTouches, stickId) || findTouch(e.touches, stickId); if (t) stickMove(t.clientX, t.clientY); }, {passive:false});
+// any touch ending anywhere: if the pad's finger is gone, let go; if no fingers remain, release every touch control
 const touchEnd = e => {
   if (stickIsTouch && stickId !== null && (findTouch(e.changedTouches, stickId) || !findTouch(e.touches, stickId))) stickReset();
   if (e.touches.length === 0) releaseAllTouch();
@@ -1043,11 +1152,11 @@ const touchEnd = e => {
 ['touchend','touchcancel'].forEach(t => document.addEventListener(t, touchEnd, {capture:true, passive:true}));
 document.addEventListener('touchstart', e => { if (stickIsTouch && stickId !== null && !findTouch(e.touches, stickId)) stickReset(); }, {capture:true, passive:true});
 // mouse / pen fallback
-stickZone.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') return; e.preventDefault(); try { stickZone.setPointerCapture(e.pointerId); } catch(_){} stickStart(e.pointerId, false, e.clientX, e.clientY); });
-stickZone.addEventListener('pointermove', e => { if (!stickIsTouch && e.pointerId === stickId) stickMove(e.clientX, e.clientY); });
-['pointerup','pointercancel','lostpointercapture'].forEach(t => stickZone.addEventListener(t, e => { if (!stickIsTouch && e.pointerId === stickId) stickReset(); }));
+dpad.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') return; e.preventDefault(); try { dpad.setPointerCapture(e.pointerId); } catch(_){} stickStart(e.pointerId, false, e.clientX, e.clientY); });
+dpad.addEventListener('pointermove', e => { if (!stickIsTouch && e.pointerId === stickId) stickMove(e.clientX, e.clientY); });
+['pointerup','pointercancel','lostpointercapture'].forEach(t => dpad.addEventListener(t, e => { if (!stickIsTouch && e.pointerId === stickId) stickReset(); }));
 function releaseAllTouch(){
-  if (stickId !== null) stickReset();
+  stickReset();
   for (const k in touchHeld) if (touchHeld[k]){ touchHeld[k] = false; release(k); }
   document.querySelectorAll('#touch .tb.on').forEach(b => b.classList.remove('on'));
 }
@@ -1058,7 +1167,7 @@ window.addEventListener('pagehide', releaseAllTouch);
 document.querySelectorAll('#acts .tb').forEach(b => {
   const k = b.dataset.k;
   const down = e => { e.preventDefault(); try{ b.setPointerCapture(e.pointerId); }catch(_){} if (!touchHeld[k]) press(k); touchHeld[k] = true; b.classList.add('on'); Sound.unlock(); };
-  const up = () => { if (touchHeld[k]){ touchHeld[k] = false; release(k); } b.classList.remove('on'); };
+  const up = () => { if (touchHeld[k]){ touchHeld[k] = false; if (!held(k)) release(k); } b.classList.remove('on'); };
   b.addEventListener('pointerdown', down);
   b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('lostpointercapture', up);
 });
@@ -2922,6 +3031,16 @@ function frame(now){
   drawPortrait();
   if (dqOpen) drawFigureTo($('dqAvatar'), true);
   if (reviewOpen) drawFigureTo($('rvAvatar'), false, true);
+  // 8-bit celebration song plays whenever he's dancing at the end (in the level, on the final sign, or in the review)
+  let tune = null;
+  if (!document.hidden && !titleOpen){
+    const endZone = room === 'main' && !quest && P.x + P.w/2 > 9290;     // the finale stretch: final sign → Contact Portal
+    if (endZone || (P.dance && !paused()) || reviewOpen || (signOpen && portraitDance)) tune = 'party';
+    else if (sudsOpen) tune = 'sim';
+    else if (room === 'delivery' || dqOpen) tune = 'tron';
+    else if (!titleOpen) tune = 'adventure';
+  }
+  Sound.track(tune);
   requestAnimationFrame(frame);
 }
 /* =========================================================
